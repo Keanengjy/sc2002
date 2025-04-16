@@ -5,6 +5,10 @@ package person;
 
 import java.util.*;
 
+import project.FlatUnavailableException;
+import project.HDBFlat;
+import project.Project;
+
 
 class ApplicationNotFoundException extends Exception {
     public ApplicationNotFoundException(String message) {
@@ -12,7 +16,7 @@ class ApplicationNotFoundException extends Exception {
     }
 }
 
-class Applicant1 extends AbstractUser {
+class Applicant1 extends AbstractUser implements User{
     private String appliedProject;
     private String applicationStatus;
     private List<String> bookingStatus;
@@ -22,12 +26,6 @@ class Applicant1 extends AbstractUser {
     
     /**
      * Constructs a new Applicant with the specified parameters.
-     * 
-     * @param name The name of the applicant
-     * @param nric The NRIC of the applicant
-     * @param password The password of the applicant
-     * @param maritalStatus The marital status of the applicant
-     * @param age The age of the applicant
      */
     public Applicant(String name, String nric, String password, MaritalStatus maritalStatus, int age) {
         super(name, nric, password, maritalStatus, age);

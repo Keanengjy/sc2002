@@ -3,21 +3,16 @@ package person;
 import java.util.ArrayList;
 import java.util.List;
 
+import project.ApplicationStatus;
+import project.Project;
+
 public class HDBManager extends AbstractUser implements ReportGenerator{
-     private String HDBOfficesUnder;
+    private String HDBOfficesUnder;
     private List<Project> managedProjects;
     private boolean pendingRegistration;
 
     /**
      * Constructs a new HDBManager with specified attributes.
-     * 
-     * @param name         Manager's name
-     * @param NRIC         Manager's NRIC
-     * @param password     Manager's password
-     * @param maritalStatus Manager's marital status
-     * @param age          Manager's age
-     * @param eligibilityCriteria Manager's eligibility criteria
-     * @param HDBOfficesUnder Offices under this manager's supervision
      */
     public HDBManager(String name, String NRIC, String password, MaritalStatus maritalStatus, 
                       int age, String eligibilityCriteria, String HDBOfficesUnder) {

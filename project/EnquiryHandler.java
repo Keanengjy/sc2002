@@ -1,6 +1,6 @@
-package person;
+package project;
 
-interface EnquiryHandler {
+public interface EnquiryHandler {
     /**
      * Handles an enquiry based on its ID.
      * 

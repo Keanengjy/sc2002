@@ -1,6 +1,6 @@
 package person;
 
-abstract class AbstractUser implements User1{
+abstract public class AbstractUser implements User{
     protected String name;
     protected String nric;
     protected String password;
@@ -11,12 +11,6 @@ abstract class AbstractUser implements User1{
 
     /**
      * Constructs a new AbstractUser with the specified parameters.
-     * 
-     * @param name The name of the user
-     * @param nric The NRIC of the user
-     * @param password The password of the user
-     * @param maritalStatus The marital status of the user
-     * @param age The age of the user
      */
     public AbstractUser(String name, String nric, String password, MaritalStatus maritalStatus, int age) {
         this.name = name;
@@ -35,9 +29,6 @@ abstract class AbstractUser implements User1{
 
     /**
      * Changes the user's password.
-     * 
-     * @param oldPassword The current password
-     * @param newPassword The new password
      */
     public void changePassword(String oldPassword, String newPassword) throws InvalidPasswordException {
         if (!this.password.equals(oldPassword)) {
@@ -53,11 +44,7 @@ abstract class AbstractUser implements User1{
 
     /**
      * Logs the user into the system.
-     * 
-     * @param username The username (NRIC)
-     * @param password The password
      */
-    @Override
     public void login(String username, String password) throws AuthenticationException {
         if (!this.nric.equals(username)) {
             throw new AuthenticationException("Invalid NRIC");
@@ -78,22 +65,19 @@ abstract class AbstractUser implements User1{
     }
 
     // Getters as per User interface
-    @Override
+
     public String getName() {
         return name;
     }
 
-    @Override
     public String getNRIC() {
         return nric;
     }
 
-    @Override
     public String getPassword() {
         return password;
     }
 
-    @Override
     public MaritalStatus getMaritalStatus() {
         return maritalStatus;
     }

@@ -1,4 +1,4 @@
-package person;
+package project;
 
 enum FlatType {
     TWO_ROOM,
@@ -21,12 +21,6 @@ public class HDBFlat {
 
     /**
      * Constructs a new HDBFlat with the specified parameters.
-     * 
-     * @param flatType The type of the flat
-     * @param unitNo The unit number of the flat
-     * @param description The description of the flat
-     * @param sellingPrice The selling price of the flat
-     * @param postalCode The postal code of the flat
      */
     public HDBFlat(FlatType flatType, int unitNo, String description, double sellingPrice, String postalCode) {
         this.flatType = flatType;
@@ -84,8 +78,6 @@ public class HDBFlat {
 
     /**
      * Generates a receipt for booking this flat.
-     * 
-     * @return The booking receipt
      */
     public String generateReceipt() {
         return "BOOKING RECEIPT\n" +

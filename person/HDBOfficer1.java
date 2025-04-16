@@ -3,6 +3,8 @@ package person;
 import java.util.HashMap;
 import java.util.Map;
 
+import project.Project;
+
 class IneligibleApplicantException extends Exception {
     public IneligibleApplicantException(String message) {
         super(message);

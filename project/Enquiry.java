@@ -1,4 +1,4 @@
-package person;
+package project;
 
 public class Enquiry {
     private String message;

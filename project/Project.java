@@ -1,7 +1,10 @@
-package person;
+package project;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import person.Applicant;
+import person.HDBOfficer;
 
 enum ApplicationStatus {
     PENDING,
