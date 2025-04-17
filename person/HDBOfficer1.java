@@ -2,6 +2,8 @@ package person;
 
 import java.util.HashMap;
 import java.util.Map;
+import project.*;
+
 
 import project.Project;
 
@@ -20,12 +22,6 @@ public class HDBOfficer1 extends AbstractUser implements EnquiryHandler{
     
     /**
      * Constructs a new HDBOfficer with the specified parameters.
-     * 
-     * @param name The name of the officer
-     * @param nric The NRIC of the officer
-     * @param password The password of the officer
-     * @param maritalStatus The marital status of the officer
-     * @param age The age of the officer
      */
     public HDBOfficer1(String name, String nric, String password, MaritalStatus maritalStatus, int age) {
         super(name, nric, password, maritalStatus, age);
@@ -42,9 +38,6 @@ public class HDBOfficer1 extends AbstractUser implements EnquiryHandler{
     
     /**
      * Registers for a project.
-     * 
-     * @param project The project to register for
-     * @return True if registration is successful, false otherwise
      */
     public boolean registerForProject(Project project) throws IneligibleApplicantException {
         // Check if already registered for a project in the same period
@@ -67,9 +60,6 @@ public class HDBOfficer1 extends AbstractUser implements EnquiryHandler{
     
     /**
      * Gets the details of a project.
-     * 
-     * @param project The project to get details for
-     * @return The project details
      */
     public String getProjectDetails(Project project) {
         return project.getProjectDetails();
@@ -77,9 +67,6 @@ public class HDBOfficer1 extends AbstractUser implements EnquiryHandler{
     
     /**
      * Responds to an enquiry.
-     * 
-     * @param enquiryID The ID of the enquiry
-     * @param response The response to the enquiry
      */
     public void replyEnquiry(int enquiryID, String response) throws EnquiryNotFoundException {
         if (!assignedEnquiries.containsKey(enquiryID)) {
@@ -93,8 +80,6 @@ public class HDBOfficer1 extends AbstractUser implements EnquiryHandler{
     
     /**
      * Handles enquiries for a project.
-     * 
-     * @param project The project to handle enquiries for
      */
     public void replyEnquiry(String response) throws EnquiryNotFoundException {
         throw new UnsupportedOperationException("Not implemented");
@@ -102,8 +87,6 @@ public class HDBOfficer1 extends AbstractUser implements EnquiryHandler{
     
     /**
      * Handles an enquiry.
-     * 
-     * @param enquiryID The ID of the enquiry to handle
      */
     @Override
     public void handleEnquiry(int enquiryID) throws EnquiryNotFoundException {
@@ -114,9 +97,6 @@ public class HDBOfficer1 extends AbstractUser implements EnquiryHandler{
     
     /**
      * Updates the flat count for a project.
-     * 
-     * @param project The project to update
-     * @param count The new flat count
      */
     public void updateFlatCount(Project project, int count) {
         // In a real implementation, this would update the project's flat count in the database

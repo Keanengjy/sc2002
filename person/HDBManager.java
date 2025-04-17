@@ -5,11 +5,16 @@ import project.Report;
 import project.ReportGenerator;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 import main.Application;
 import main.ApplicationStatus;
 
 public class HDBManager extends AbstractUser implements ReportGenerator {
+
+
+
     private String HDBOfficesUnder;
     private List<Project> managedProjects;
     private List<Application> pendingApprovals; // Added based on UML
@@ -21,6 +26,11 @@ public class HDBManager extends AbstractUser implements ReportGenerator {
         this.managedProjects = new ArrayList<>();
         this.pendingApprovals = new ArrayList<>(); // Initialize pending approvals
         this.pendingRegistration = true;
+    }
+
+    @Override
+    public void calculateEligibilityCriteria() {
+        System.out.println("Eligibility criteria calculated for HDBManager.");
     }
 
     public String getHDBOfficesUnder() {
