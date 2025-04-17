@@ -1,4 +1,4 @@
-package person;
+package project;
 
 public class Report {
     private String title;

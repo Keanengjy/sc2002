@@ -1,4 +1,4 @@
-package person;
+package project;
 
 interface ReportGenerator {
    /**
