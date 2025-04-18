@@ -13,8 +13,6 @@ import main.ApplicationStatus;
 
 public class HDBManager extends AbstractUser implements ReportGenerator {
 
-
-
     private String HDBOfficesUnder;
     private List<Project> managedProjects;
     private List<Application> pendingApprovals; // Added based on UML
