@@ -9,7 +9,13 @@ enum UserRole {
     HDBManager
 }
 
-class HDBManager extends AbstractUser {
+enum Visibility {
+    on,
+    off
+}
+
+
+public class HDBManager extends AbstractUser {
     private List<HDBOfficer> HDBOfficersUnder;
     private List<Project> managedProjects;
     private List<String> pendingApprovals;

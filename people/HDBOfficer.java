@@ -8,7 +8,7 @@ enum UserRole {
     HDBManager
 }
 
-class HDBOfficer extends AbstractUser {
+public class HDBOfficer extends AbstractUser {
     private String registeredProjects;
     private String registeredProjectStatus;
 

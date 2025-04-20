@@ -1,5 +1,7 @@
 package people;
 
+import project.Project;
+
 enum UserRole {
     Applicant,
     HDBOfficer,
@@ -11,7 +13,7 @@ interface User {
     boolean login(String username, String password);
     void logout();
     void changePassword(String newPassword);
-    boolean checkEligibility();
+    boolean checkEligibility(Project project);
     UserRole getRole();
 
 }

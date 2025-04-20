@@ -1,6 +1,12 @@
 package project;
 
-class HDBFlat {
+enum FlatType {
+    TwoRoom,
+    ThreeRoom
+}
+
+
+public class HDBFlat {
     private FlatType flatType;
     private int unitNo;
     private String description;

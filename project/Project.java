@@ -1,6 +1,21 @@
 package project;
 
-class Project {
+import java.util.List;
+
+enum ApplicationStatus {
+    Pending,
+    Approved,
+    Rejected,
+    Booked
+}
+
+
+enum Visibility {
+    on,
+    off
+}
+
+public class Project {
     private String projectName;
     private String neighborhood;
     private String manager;

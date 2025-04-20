@@ -9,10 +9,24 @@ enum UserRole {
     HDBManager
 }
 
-class Applicant extends AbstractUser {
+enum MaritalStatus {
+    Single,
+    Married
+}
+
+public class Applicant extends AbstractUser{
     private String appliedProject;
     private String applicationStatus;
     private HDBFlat selectedFlat;
+    private MaritalStatus maritalStatus; // Add maritalStatus field
+
+    public MaritalStatus getMaritalStatus() { // Add getter for maritalStatus
+        return maritalStatus;
+    }
+
+    public void setMaritalStatus(MaritalStatus maritalStatus) { // Add setter for maritalStatus
+        this.maritalStatus = maritalStatus;
+    }
 
     public void viewProject() {}
     public void applyProject() {}
@@ -27,13 +41,14 @@ class Applicant extends AbstractUser {
         return UserRole.Applicant;
     }
 
-@Override
-public boolean checkEligibility(Project project) {
-    // Updated rule: Single applicants must be at least 35, married applicants at least 21
-    if (this.maritalStatus == MaritalStatus.Single && this.age >= 35) {
-        return true;
-    } else if (this.maritalStatus == MaritalStatus.Married && this.age >= 21) {
-        return true;
+    @Override
+    public boolean checkEligibility(Project project) {
+        // Updated rule: Single applicants must be at least 35, married applicants at least 21
+        if (this.getMaritalStatus() == MaritalStatus.Single && this.getAge() >= 35) {
+            return true;
+        } else if (this.getMaritalStatus() == MaritalStatus.Married && this.getAge() >= 21) {
+            return true;
+        }
+        return false;
     }
-    return false;
 }
