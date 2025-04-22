@@ -5,6 +5,7 @@ import java.util.List;
 
 import person.Applicant;
 import person.HDBOfficer;
+import person.MaritalStatus;
 
 enum ApplicationStatus {
     PENDING,
