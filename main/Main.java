@@ -2,17 +2,10 @@ package main;
 
 import fileops.FileOps;
 import projects.HDBFlat;
-import projects.Project;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-
-enum FlatType {
-    TwoRoom,
-    ThreeRoom
-}
 
 public class Main {
     public static void main(String[] args) {
@@ -39,20 +32,10 @@ public class Main {
                     availableFlats
                 );
 
-                // Project project = new Project(
-                //     "Project A",
-                //     "Woodlands",
-                //     "Manager X",
-                //     "P001",
-                //     true,
-                //     "2025-05-01",
-                //     "2025-06-01",
-                //     availableFlats
-                // );
+                System.out.println(p.getProjectName());
 
             }
 
-            
             
             // Write to file example
             // data.add(List.of("John Doe", "12345678A"));
