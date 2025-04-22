@@ -2,24 +2,24 @@ package person;
 
 abstract public class AbstractUser implements User{
     protected String name;
-    protected String nric;
-    protected String password;
-    protected MaritalStatus maritalStatus;
+    protected String NRIC;
     protected int age;
-    protected String eligibilityCriteria;
-    protected boolean isLoggedIn;
+    protected MaritalStatus maritalStatus;
+    protected String password;
+    protected boolean eligibilityCriteria;
+    protected boolean loggedIn;
 
     /**
      * Constructs a new AbstractUser with the specified parameters.
      */
-    public AbstractUser(String name, String nric, String password, MaritalStatus maritalStatus, int age) {
+    public AbstractUser(String name, String NRIC, int age, MaritalStatus maritalStatus, String password, boolean eligibilityCriteria, boolean loggedIn) {
         this.name = name;
-        this.nric = nric;
-        this.password = password;
-        this.maritalStatus = maritalStatus;
+        this.NRIC = NRIC;
         this.age = age;
-        this.isLoggedIn = false;
-        calculateEligibilityCriteria();
+        this.maritalStatus = maritalStatus;
+        this.password = password;
+        this.eligibilityCriteria = eligibilityCriteria;
+        this.loggedIn = false;
     }
 
     /**
