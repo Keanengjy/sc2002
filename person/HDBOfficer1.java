@@ -2,6 +2,8 @@ package person;
 
 import java.util.HashMap;
 import java.util.Map;
+import project.Enquiry;
+import project.EnquiryHandler;
 
 import project.Project;
 

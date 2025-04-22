@@ -1,24 +1,12 @@
 package person;
+import project.Project;
 
-
-enum MaritalStatus {
-    SINGLE,
-    MARRIED
-}
-
-interface User {
-
-    public String name;
-    public String NRIC;
-    public String password;
-    public MaritalStatus maritalStatus;
-    public enum MaritalStatus { MARRIED, SINGLE};
-
-    String getName();
-    String getNRIC();
-    String getPassword();
-    MaritalStatus getMaritalStatus();
-    void login(String username, String password) throws AuthenticationException;
+public interface User {
+    void login(String username, String password);
+    void logout();
+    void changePassword(String newPassword);
+    boolean checkEligibility(Project project)throws AuthenticationException; // Assume Project class is defined elsewhere
+    UserRole getRole();
 }
 
 class AuthenticationException extends Exception {

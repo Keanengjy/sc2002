@@ -8,6 +8,7 @@ import java.util.*;
 import project.FlatUnavailableException;
 import project.HDBFlat;
 import project.Project;
+import project.Enquiry;
 
 
 class ApplicationNotFoundException extends Exception {
