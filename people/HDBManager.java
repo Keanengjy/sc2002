@@ -1,7 +1,7 @@
 package people;
 
 import java.util.List;
-import project.Project;
+import projects.Project;
 
 enum UserRole {
     Applicant,
@@ -26,6 +26,7 @@ public class HDBManager extends AbstractUser {
     public void toggleApplication(String decision) {}
     public void replyEnquiry(String reply) {}
     public void approveOfficer() {}
+    public void applicationDecision(String decision) {}
 
     @Override
     public UserRole getRole() {
@@ -35,6 +36,6 @@ public class HDBManager extends AbstractUser {
     @Override
     public boolean checkEligibility(Project project) {
         // Managers always have access, or could be based on a rule
-        return super.checkEligibility(project);
+        return true;
     }
 }

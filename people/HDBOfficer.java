@@ -1,6 +1,6 @@
 package people;
 
-import project.Project;
+import projects.Project;
 
 enum UserRole {
     Applicant,
@@ -26,8 +26,10 @@ public class HDBOfficer extends AbstractUser {
         return UserRole.HDBOfficer;
     }
 
-@Override
-public boolean checkEligibility(Project project) {
-    // Example rule: Officers are eligible if they are logged in and have any project assigned
-    return this.loggedIn && registeredProjects != null && !registeredProjects.isEmpty();
+    @Override
+    public boolean checkEligibility(Project project) {
+        // Example rule: Officers are eligible if they are logged in and have any project assigned
+
+        return this.loggedIn && registeredProjects != null && !registeredProjects.isEmpty();
+    }
 }

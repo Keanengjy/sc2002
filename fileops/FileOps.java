@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.Scanner;
 
 public class FileOps {
-    private static final String APPLICANT_LIST_FILE = "sc2002/Data/ApplicantList.csv";
-    private static final String OFFICER_LIST_FILE = "sc2002/Data/OfficerList.csv";
-    private static final String MANAGER_LIST_FILE = "sc2002/Data/ManagerList.csv";
-    private static final String PROJECT_LIST_FILE = "sc2002/Data/ProjectList.csv";
-    private static final String APPLICATION_LIST_FILE = "sc2002/Data/ApplicationList.csv";
-    private static final String REGISTRATION_LIST_FILE = "sc2002/Data/RegistrationList.csv";
-    private static final String ENQUIRY_LIST_FILE = "sc2002/Data/EnquiryList.csv";
-    private static final String REPLY_LIST_FILE = "sc2002/Data/ReplyList.csv";
+    private static final String APPLICANT_LIST_FILE = "Data/ApplicantList.csv";
+    private static final String OFFICER_LIST_FILE = "Data/OfficerList.csv";
+    private static final String MANAGER_LIST_FILE = "Data/ManagerList.csv";
+    private static final String PROJECT_LIST_FILE = "Data/ProjectList.csv";
+    private static final String APPLICATION_LIST_FILE = "Data/ApplicationList.csv";
+    private static final String REGISTRATION_LIST_FILE = "Data/RegistrationList.csv";
+    private static final String ENQUIRY_LIST_FILE = "Data/EnquiryList.csv";
+    private static final String REPLY_LIST_FILE = "Data/ReplyList.csv";
 
     private static String getFilePath(String filename) {
         String filepath;

@@ -1,7 +1,7 @@
-package project;
+package projects;
 
 public class Enquiry {
-    private Map<String, String> message;
+    // private Map<String, String> message;
     private int enquiryID;
     private int senderID;
     private String response;

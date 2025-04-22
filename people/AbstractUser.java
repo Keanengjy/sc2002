@@ -1,6 +1,6 @@
 package people;
 
-import project.Project;
+import projects.Project;
 
 enum MaritalStatus {
     Single,
@@ -22,9 +22,9 @@ abstract class AbstractUser implements User {
     protected boolean eligibilityCriteria; // Indicates if the user has access permissions
     protected boolean loggedIn;
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public int getAge() { return age; }
+    public String getName() { return name; } // Add getter for name
+    public void setName(String name) { this.name = name; } // Add setter for name
+    public int getAge() { return age; } // Add getter for age
     public void setAge(int age) { this.age = age; } // Add setter for age   
     public String getNRIC() { return NRIC; } // Add getter for NRIC
     public void setNRIC(String NRIC) { this.NRIC = NRIC; } // Add setter for NRIC
