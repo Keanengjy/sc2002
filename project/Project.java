@@ -1,4 +1,4 @@
-package main;
+package project;
 
 import java.util.List;
 import java.util.Map;
@@ -8,7 +8,7 @@ enum ApplicationStatus {
     Approved,
     Rejected,
     Booked
-}
+} 
 
 enum Visibility {
     on,
@@ -26,20 +26,20 @@ public class Project {
     private String neighborhood;
     private String manager;
     private String projectID;
-    // private ApplicationStatus applicationStatus;
+    private ApplicationStatus applicationStatus;
     private boolean visibility;
     private String applicationOpeningDate;
     private String applicationClosingDate;
     private Map<FlatType, Integer> availableFlats;
     // private List<HDBFlat> flats;
 
-    public Project(String projectName, String neighborhood, String manager, String projectID, boolean visibility,
+    public Project(String projectName, String neighborhood, String manager, String projectID, ApplicationStatus applicationStatus,boolean visibility,
             String applicationOpeningDate, String applicationClosingDate, Map<FlatType, Integer> availableFlats) {
         this.projectName = projectName;
         this.neighborhood = neighborhood;
         this.manager = manager;
         this.projectID = projectID;
-        // this.applicationStatus = applicationStatus;
+        this.applicationStatus = applicationStatus;
         this.visibility = visibility;
         this.applicationOpeningDate = applicationOpeningDate;
         this.applicationClosingDate = applicationClosingDate;
@@ -115,7 +115,9 @@ public class Project {
     public String getApplicationClosingDate() {
         return applicationClosingDate;
     }
-    // public Map<HDBFlat, Integer> getAvailableFlats() { return availableFlats; }
+
+    public Map<FlatType, Integer> getAvailableFlats() { return availableFlats; }
+
     // public List<HDBFlat> getFlats() { return flats; }
 
     // public void addProject(String project) { allProject.add(project); }

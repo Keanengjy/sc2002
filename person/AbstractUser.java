@@ -1,6 +1,6 @@
-package people;
+package person;
 
-import main.Project;
+import project.Project;
 
 enum MaritalStatus {
     Single,

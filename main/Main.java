@@ -1,11 +1,15 @@
 package main;
 
 import fileops.FileOps;
+import project.FlatType;
 import project.HDBFlat;
+import project.ApplicationStatus;
+import project.Project;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 public class Main {
     public static void main(String[] args) {
@@ -18,21 +22,20 @@ public class Main {
             for (List<String> record : projectData.subList(1, projectData.size())) {
                 
                 Map<FlatType, Integer> availableFlats = new HashMap<>();
-                availableFlats.put(main.FlatType.TwoRoom, Integer.parseInt(record.get(2)));
-                availableFlats.put(main.FlatType.ThreeRoom, Integer.parseInt(record.get(3)));
+                availableFlats.put(FlatType.TwoRoom, Integer.parseInt(record.get(3)));
+                availableFlats.put(FlatType.ThreeRoom, Integer.parseInt(record.get(6)));
 
                 Project p = new Project(
                     record.get(0),  // projectName
                     record.get(1),  // neighborhood
                     record.get(10), // manager
                     "",             // projectID (unused)
+                    ApplicationStatus.Pending, // applicationStatus (unused)
                     true,           // visibility (arbitrary default)
                     record.get(8),  // applicationOpeningDate
                     record.get(9),  // applicationClosingDate
                     availableFlats
                 );
-
-                System.out.println(p.getProjectName());
 
             }
 

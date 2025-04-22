@@ -1,6 +1,6 @@
-package people;
+package person;
 
-import projects.Project;
+import project.Project;
 
 enum UserRole {
     Applicant,
