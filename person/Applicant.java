@@ -1,7 +1,7 @@
 package people;
 
-import projects.HDBFlat;
-import projects.Project;
+import project.HDBFlat;
+import project.Project;
 
 enum UserRole {
     Applicant,

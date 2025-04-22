@@ -1,4 +1,4 @@
-package projects;
+package project;
 
 public class Enquiry {
     // private Map<String, String> message;

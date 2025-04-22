@@ -1,7 +1,7 @@
 package main;
 
 import fileops.FileOps;
-import projects.HDBFlat;
+import project.HDBFlat;
 
 import java.util.HashMap;
 import java.util.List;

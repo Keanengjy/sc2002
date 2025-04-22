@@ -1,4 +1,4 @@
-package projects;
+package project;
 
 interface EnquiryHandler {
     void handleEnquiry(int enquiryID);
