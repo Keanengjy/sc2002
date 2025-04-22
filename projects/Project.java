@@ -33,20 +33,6 @@ public class Project {
     private Map<FlatType, Integer> availableFlats;
     // private List<HDBFlat> flats;
 
-    public Project() {
-        // Default constructor
-        this.projectName = null;
-        this.neighborhood = null;
-        this.manager = null;
-        this.projectID = null;
-        //this.applicationStatus = null;
-        this.visibility = false;
-        this.applicationOpeningDate = null;
-        this.applicationClosingDate = null;
-        this.availableFlats = null;
-        // this.flats = null;
-    }
-
     public Project(String projectName, String neighborhood, String manager, String projectID, boolean visibility,
             String applicationOpeningDate, String applicationClosingDate, Map<FlatType, Integer> availableFlats) {
         this.projectName = projectName;
@@ -77,7 +63,7 @@ public class Project {
     }
 
     // public void setApplicationStatus(ApplicationStatus status) {
-    //     this.applicationStatus = status;
+    // this.applicationStatus = status;
     // }
 
     public void setVisibility(boolean visibility) {
@@ -115,7 +101,7 @@ public class Project {
     }
 
     // public ApplicationStatus getApplicationStatus() {
-    //     return applicationStatus;
+    // return applicationStatus;
     // }
 
     public boolean getVisibility() {
@@ -144,5 +130,4 @@ public class Project {
         return visibility;
     }
 
-    
 }

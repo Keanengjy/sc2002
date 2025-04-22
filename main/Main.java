@@ -28,7 +28,7 @@ public class Main {
                 availableFlats.put(main.FlatType.TwoRoom, Integer.parseInt(record.get(2)));
                 availableFlats.put(main.FlatType.ThreeRoom, Integer.parseInt(record.get(3)));
 
-                Project project = new Project(
+                Project p = new Project(
                     record.get(0),  // projectName
                     record.get(1),  // neighborhood
                     record.get(10), // manager
