@@ -1,9 +1,15 @@
 package project;
 
-enum FlatType {
-    TwoRoom,
-    ThreeRoom
-}
+import java.util.Map;
+
+import person.HDBManager;
+import person.HDBOfficer;
+import person.Applicant;
+
+import person.MaritalStatus;
+import project.UserRole;
+import project.FlatType;
+import project.ApplicationStatus;
 
 
 public class HDBFlat {

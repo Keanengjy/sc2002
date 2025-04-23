@@ -1,6 +1,7 @@
 package main;
 
 import project.ApplicationStatus;
+import project.Enquiry;
 import project.FlatType;
 import project.Visibility;
 import person.MaritalStatus;
@@ -88,24 +89,44 @@ public class Main {
                 );
 
                     // Simulate officer registering for a project
-                    // Simulate officer registering for a project
-                    HDBOfficer officer = officerMap.get("Daniel");
-                    if (officer != null) {
-                        officer.registerProject(p);
-                    }
+
+                    // HDBOfficer officer = officerMap.get("Daniel");
+                    // if (officer != null) {
+                    //     officer.registerProject(p);
+                    // }
 
                     // Show all pending approvals by this manager
-                    manager.processPendingApprovals();
+
+                    // manager.processPendingApprovals();
 
                     // Let manager approve or reject
-                    System.out.println("Do you want to approve officer for project " + p.getProjectName() + "? (yes/no)");
-                    String input = scanner.nextLine();
-                    if (input.equalsIgnoreCase("yes")) {
-                        manager.approveOfficer(p.getProjectName());
-                    } else {
-                        System.out.println("Approval not granted.");
-                    }
-                }
+
+                    // System.out.println("Do you want to approve officer for project " + p.getProjectName() + "? (yes/no)");
+                    // String input = scanner.nextLine();
+                    // if (input.equalsIgnoreCase("yes")) {
+                    //     manager.approveOfficer(p);
+                    // } else {
+                    //     System.out.println("Approval not granted.");};
+
+                    // System.out.println("Project Details for " + officer.getName() + "'s Registered Project:");
+                    // officer.getProjectDetails();
+
+                    // Test Enquiry reply
+
+                    // Map<String,String> msg = new HashMap<>();
+                    // msg.put("Applicant123", "When is key collection?");
+                    // Enquiry enquiry = new Enquiry(msg, 1, 123, null, 0);
+
+                    // // 2. create officer and let them reply
+                    // HDBOfficer officer = officerMap.get("Daniel");
+                    // officer.replyEnquiry(enquiry);
+
+                    // // 3. print stored reply to verify
+                    // System.out.println("\n=== Stored in Enquiry object ===");
+                    // System.out.println("Responder ID : " + enquiry.getResponderID());
+                    // System.out.println("Reply        : " + enquiry.getResponse());
+                    
+            }
 
             
 

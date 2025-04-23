@@ -8,17 +8,18 @@ import project.UserRole;
 import project.HDBFlat;
 import project.Project;
 
-public class Applicant extends AbstractUser{
+public class Applicant extends AbstractUser {
     private String appliedProject;
     private String applicationStatus;
     private HDBFlat selectedFlat;
     private String maritalStatus; // Add maritalStatus field
 
-    public Applicant(String appliedProject, String applicationStatus, HDBFlat selectedFlat, MaritalStatus maritalStatus) {
-        this.appliedProject = appliedProject;
-        this.applicationStatus = applicationStatus;
-        this.selectedFlat = selectedFlat;
-        this.maritalStatus = maritalStatus; // Initialize maritalStatus
+    public Applicant(String name, String NRIC, int age, String maritalStatus, String password) {
+        super(name, NRIC, age, maritalStatus, password); // Call to parent constructor
+        this.appliedProject = "";
+        this.applicationStatus = "";
+        this.selectedFlat = null;
+
     }
 
     public String getMaritalStatus() { // Update return type for getter
@@ -33,13 +34,24 @@ public class Applicant extends AbstractUser{
         System.out.println("Applied Project: " + appliedProject);
 
     }
+
     public void applyProject() {
         System.out.println("Applying for project: " + appliedProject);
     }
-    public void bookFlat() {}
-    public boolean withdrawApplication() { return true; }
-    public void submitEnquiry(String enquiry) {}
-    public boolean deleteEnquiry(int enquiryID) { return true; }
+
+    public void bookFlat() {
+    }
+
+    public boolean withdrawApplication() {
+        return true;
+    }
+
+    public void submitEnquiry(String enquiry) {
+    }
+
+    public boolean deleteEnquiry(int enquiryID) {
+        return true;
+    }
 
     public void viewAllProjects() {
         if (this.eligibilityCriteria && this.getMaritalStatus() == MaritalStatus.Single) {
@@ -51,7 +63,7 @@ public class Applicant extends AbstractUser{
 
         } else if (this.eligibilityCriteria && this.getMaritalStatus() == MaritalStatus.Married) {
             System.out.println("Viewing all projects for Married applicants.");
-            
+
             // project.Project projects = new project.Project();
             // String projectName = projects.getProjectName();
             // System.out.println("Project Name: " + projectName);
@@ -68,11 +80,12 @@ public class Applicant extends AbstractUser{
 
     @Override
     public boolean checkEligibility(Project project) {
-        // Updated rule: Single applicants must be at least 35, married applicants at least 21
-        if (this.getMaritalStatus() == MaritalStatus.Single && this.getAge() >= 35) {
+        // Updated rule: Single applicants must be at least 35, married applicants at
+        // least 21
+        if (this.getMaritalStatus().equals("Single") && this.getAge() >= 35) {
             this.eligibilityCriteria = true;
             return true;
-        } else if (this.getMaritalStatus() == MaritalStatus.Married && this.getAge() >= 21) {
+        } else if (this.getMaritalStatus().equals("Married") && this.getAge() >= 21) {
             this.eligibilityCriteria = true;
             return true;
         }
