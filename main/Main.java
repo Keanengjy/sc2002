@@ -62,6 +62,7 @@ public class Main {
 
             // // 2. create officer and let them reply
             HDBOfficer officer = ObjectCreate.officerMap.get("Daniel");
+            
             // officer.replyEnquiry(enquiry);
 
             // // 3. print stored reply to verify
@@ -85,6 +86,17 @@ public class Main {
             // }
 
             // System.out.println("\nFinal stock: " + p.getFlats());
+
+            // Initialize applicantMap
+
+            String[] result = officer.getApplication("S1234567A", ObjectCreate.applicantMap);
+
+            if (result != null) {
+                System.out.println("Applied project: " + result[0]);
+                System.out.println("Selected flat : " + result[1]);
+            } else {
+                System.out.println("NRIC not found.");
+            }
 
             // Write to file example
             // data.add(List.of("John Doe", "12345678A"));

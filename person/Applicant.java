@@ -12,7 +12,6 @@ public class Applicant extends AbstractUser {
     private String appliedProject;
     private String applicationStatus;
     private HDBFlat selectedFlat;
-    private String maritalStatus; // Add maritalStatus field
 
     public Applicant(String name, String NRIC, int age, String maritalStatus, String password) {
         super(name, NRIC, age, maritalStatus, password); // Call to parent constructor
@@ -22,13 +21,12 @@ public class Applicant extends AbstractUser {
 
     }
 
-    public String getMaritalStatus() { // Update return type for getter
-        return maritalStatus;
-    }
-
-    public void setMaritalStatus(String maritalStatus) { // Update setter for maritalStatus
-        this.maritalStatus = maritalStatus;
-    }
+    public String getAppliedProject() {return appliedProject;}
+    public void setAppliedProject(String appliedProject) {this.appliedProject = appliedProject;}
+    public String getApplicationStatus() {return applicationStatus;}
+    public void setApplicationStatus(String applicationStatus) {this.applicationStatus = applicationStatus;}
+    public HDBFlat getSelectedFlat() {return selectedFlat;}
+    public void setSelectedFlat(HDBFlat selectedFlat) {this.selectedFlat = selectedFlat;}
 
     public void viewProject() {
         System.out.println("Applied Project: " + appliedProject);

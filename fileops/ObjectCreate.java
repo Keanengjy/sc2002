@@ -1,6 +1,8 @@
 package fileops;
 
 import java.util.*;
+
+import person.Applicant;
 import person.HDBManager;
 import person.HDBOfficer;
 import project.*;
@@ -10,14 +12,26 @@ public class ObjectCreate {
     // ⬇ static so Main can access
     public static final Map<String,HDBOfficer> officerMap = new HashMap<>();
     public static final Map<String,HDBManager> managerMap = new HashMap<>();
+    public static final Map<String,Applicant> applicantMap = new HashMap<>();
     public static final List<HDBOfficer> projectOfficers = new ArrayList<>();
     public static final List<Project>        projectList = new ArrayList<>();
 
     static {      // static‑init block runs once
         try {
+            List<List<String>> applicantData = FileOps.readFile("ApplicantList");
             List<List<String>> managerData = FileOps.readFile("ManagerList");
             List<List<String>> officerData = FileOps.readFile("OfficerList");
             List<List<String>> projectData = FileOps.readFile("ProjectList");
+
+            // ── build applicants ────────────────────────────
+            for (List<String> rec : applicantData.subList(1, applicantData.size())) {
+                Applicant app = new Applicant(
+                        rec.get(0).trim(), rec.get(1).trim(),
+                        Integer.parseInt(rec.get(2).trim()),
+                        rec.get(3).trim(), rec.get(4).trim());
+                applicantMap.put(app.getNRIC(), app);
+
+            }
 
             // ── build officers ────────────────────────────
             for (List<String> rec : officerData.subList(1, officerData.size())) {

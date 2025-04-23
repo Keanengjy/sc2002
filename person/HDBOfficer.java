@@ -5,10 +5,15 @@ import project.Visibility;
 import person.MaritalStatus;
 import project.UserRole;
 import project.FlatType;
+
 import project.HDBFlat;
 import project.Enquiry;
-import person.HDBManager;
 import project.Project;
+
+import person.Applicant;
+import person.HDBManager;
+
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -81,10 +86,31 @@ public class HDBOfficer extends AbstractUser {
         return HDBFlat.decrementUnits(project, type);
     }
 
-    public void updateApplicationList(String NRIC) {}
-    public void updateInfo() {}
+    public String[] getApplication(String nric, Map<String, Applicant> applicants) {
+        // Check if the NRIC exists in the map
+        Applicant a = applicants.get(nric);
+        
+        // If the applicant with the given NRIC is found
+        if (a != null) {
+            String project = a.getAppliedProject();   // "" if never applied
+            HDBFlat flat = a.getSelectedFlat();       // may be null
+    
+            // Return project and flat details
+            return new String[]{
+                    project,
+                    (flat != null) ? flat.toString() : "null"  // flat.toString() or "null" if no flat
+            };
+        }
+        return null;
+    }
 
-    public void generateReceipt() {}
+    public void updateInfo() {
+
+    }
+
+    public void generateReceipt() {
+
+    }
 
     public void viewStatus() {
         System.out.println("Status: " + registeredProjectStatus);
