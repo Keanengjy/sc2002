@@ -27,7 +27,7 @@ public class Main {
 
             // // grab objects built in ObjectCreate
             // HDBOfficer officer = ObjectCreate.officerMap.get("Daniel");
-            // Project     p      = ObjectCreate.projectList.get(0);   // first project for demo
+            Project     p      = ObjectCreate.projectList.get(0);   // first project for demo
             
             // /* Officer submits application */
             // officer.registerProject(p);
@@ -61,7 +61,7 @@ public class Main {
             // Enquiry enquiry = new Enquiry(msg, 1, 123, null, 0);
 
             // // 2. create officer and let them reply
-            // HDBOfficer officer = ObjectCreate.officerMap.get("Daniel");
+            HDBOfficer officer = ObjectCreate.officerMap.get("Daniel");
             // officer.replyEnquiry(enquiry);
 
             // // 3. print stored reply to verify
@@ -69,11 +69,27 @@ public class Main {
             // System.out.println("Responder ID : " + enquiry.getResponderID());
             // System.out.println("Reply        : " + enquiry.getResponse());
             
-            
+            //Book flats
 
-                // Write to file example
-                // data.add(List.of("John Doe", "12345678A"));
-                // FileOps.writeFile("ApplicantList", data);
+            // System.out.println("Initial stock: " + p.getFlats());
+            // for (int i = 1; i <= 3; i++) {
+            //     boolean ok = officer.updateFlatCount(p, FlatType.TwoRoom);
+            //     System.out.printf("  Attempt %d to book 2 room: %s%n",
+            //                       i, ok ? "SUCCESS" : "FAILED");
+            // }
+            //         // Book three 3‑room units
+            // for (int i = 1; i <= 3; i++) {
+            //     boolean ok = officer.updateFlatCount(p, FlatType.ThreeRoom);
+            //     System.out.printf("  Attempt %d to book 3 room: %s%n",
+            //                     i, ok ? "SUCCESS" : "FAILED");
+            // }
+
+            // System.out.println("\nFinal stock: " + p.getFlats());
+
+            // Write to file example
+            // data.add(List.of("John Doe", "12345678A"));
+            // FileOps.writeFile("ApplicantList", data);
+
             }catch(Exception e)
         {
             e.printStackTrace();

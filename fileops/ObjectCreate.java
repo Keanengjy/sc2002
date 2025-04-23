@@ -39,9 +39,9 @@ public class ObjectCreate {
 
             // ── build projects ────────────────────────────
             for (List<String> record : projectData.subList(1, projectData.size())) {
-                Map<FlatType,Integer> flats = new HashMap<>();
-                flats.put(FlatType.TwoRoom , Integer.parseInt(record.get(3).trim()));
-                flats.put(FlatType.ThreeRoom, Integer.parseInt(record.get(6).trim()));
+                // Map<FlatType,Integer> flats = new HashMap<>();
+                // flats.put(FlatType.TwoRoom , Integer.parseInt(record.get(3).trim()));
+                // flats.put(FlatType.ThreeRoom, Integer.parseInt(record.get(6).trim()));
 
                 HDBManager manager = managerMap.get(record.get(10).trim());
                 if (manager==null) continue;
@@ -70,11 +70,16 @@ public class ObjectCreate {
                         true,
                         record.get(8).trim(),   // open
                         record.get(9).trim(),   // close
-                        flats,
-                        projectOfficers); // empty list of officers
+                        // flats,
+                        projectOfficers,
+                        Integer.parseInt(record.get(11).trim()),
+                        Integer.parseInt(record.get(3).trim()),
+                        Integer.parseInt(record.get(6).trim()));
 
                 projectList.add(p);
             }
+
+
 
         } catch(Exception e){ e.printStackTrace(); }
     }

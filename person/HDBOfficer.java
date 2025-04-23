@@ -4,12 +4,15 @@ import project.ApplicationStatus;
 import project.Visibility;
 import person.MaritalStatus;
 import project.UserRole;
-
+import project.FlatType;
+import project.HDBFlat;
 import project.Enquiry;
 import person.HDBManager;
 import project.Project;
 import java.util.Map;
 import java.util.Scanner;
+
+
 
 public class HDBOfficer extends AbstractUser {
     private String projects;
@@ -53,7 +56,7 @@ public class HDBOfficer extends AbstractUser {
             System.out.println("Neighborhood: " + registeredProject.getNeighborhood());
             System.out.println("Application Open: " + registeredProject.getApplicationOpeningDate());
             System.out.println("Application Close: " + registeredProject.getApplicationClosingDate());
-            System.out.println("Flats Available: " + registeredProject.getAvailableFlats());
+            System.out.println("Flats Available: " + registeredProject.getFlats());
             System.out.println("Visibility: " + (registeredProject.isVisible() ? "Visible" : "Not Visible"));
             System.out.println("Status: " + registeredProjectStatus);  // Assuming this field is set when the officer is approved
         } else {
@@ -74,9 +77,10 @@ public class HDBOfficer extends AbstractUser {
         scanner.close();
     }
     
-    public void updateFlatCount() {
-        
+    public boolean updateFlatCount(Project project, FlatType type) {
+        return HDBFlat.decrementUnits(project, type);
     }
+
     public void updateApplicationList(String NRIC) {}
     public void updateInfo() {}
 
