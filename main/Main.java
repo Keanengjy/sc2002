@@ -14,10 +14,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         try {
+
+            Scanner scanner = new Scanner(System.in);
             // Read from file example
             List<List<String>> applicantsData = FileOps.readFile("ApplicantList");
             List<List<String>> managerData = FileOps.readFile("ManagerList");
@@ -83,12 +86,33 @@ public class Main {
                     availableFlats,
                     projectOfficers  // list of officers
                 );
-            }
+
+                    // Simulate officer registering for a project
+                    // Simulate officer registering for a project
+                    HDBOfficer officer = officerMap.get("Daniel");
+                    if (officer != null) {
+                        officer.registerProject(p);
+                    }
+
+                    // Show all pending approvals by this manager
+                    manager.processPendingApprovals();
+
+                    // Let manager approve or reject
+                    System.out.println("Do you want to approve officer for project " + p.getProjectName() + "? (yes/no)");
+                    String input = scanner.nextLine();
+                    if (input.equalsIgnoreCase("yes")) {
+                        manager.approveOfficer(p.getProjectName());
+                    } else {
+                        System.out.println("Approval not granted.");
+                    }
+                }
+
+            
 
             // Write to file example
             // data.add(List.of("John Doe", "12345678A"));
             // FileOps.writeFile("ApplicantList", data);
-        }catch(Exception e) {
+        }catch(Exception e){
             e.printStackTrace();
         }
 
@@ -97,7 +121,7 @@ public class Main {
     private static String stripQuotes(String value) {
         if (value.startsWith("\"")) {
             return value.substring(1);
-        }else if(value.endsWith("\"")) {
+        } else if (value.endsWith("\"")) {
             return value.substring(0, value.length() - 1);
         }
         return value;

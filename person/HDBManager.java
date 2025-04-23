@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
 import project.Project;
 
 
@@ -30,7 +31,18 @@ public class HDBManager extends AbstractUser {
     public void toggleProjectVisibility(boolean visibility) {}
     public void toggleApplication(String decision) {}
     public void replyEnquiry(String reply) {}
-    public void approveOfficer() {}
+
+    public void approveOfficer(String projectName) {
+        HDBOfficer officer = pendingApprovals.get(projectName);
+        if (officer != null) {
+            officer.setRegisteredProject(projectName);  // assuming this setter exists
+            officer.setRegisteredProjectStatus(ApplicationStatus.Approved);  // if you have a status attribute
+            System.out.println("Officer " + officer.getName() + " approved for project " + projectName);
+            pendingApprovals.remove(projectName); // remove from pending after approval
+        } else {
+            System.out.println("No pending officer found for project " + projectName);
+        }
+    }
 
     public void applicationDecision(String projectName, HDBOfficer officer) {
         pendingApprovals.put(projectName, officer);

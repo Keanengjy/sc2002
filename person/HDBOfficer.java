@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class HDBOfficer extends AbstractUser {
     private String projects;
-    private Project registeredProject;
+    private String registeredProject;
     private ApplicationStatus registeredProjectStatus;
 
     public HDBOfficer(String name, String NRIC, int age, String maritalStatus, String password, String projects) {
@@ -17,11 +17,27 @@ public class HDBOfficer extends AbstractUser {
         this.registeredProjectStatus = ApplicationStatus.Pending;
     }
 
+    public void setRegisteredProjectStatus(ApplicationStatus status) {
+        this.registeredProjectStatus = status;
+    }
+
+    public ApplicationStatus getRegisteredProjectStatus() {
+        return this.registeredProjectStatus;
+    }
+
+    public void setRegisteredProject(String project) {
+        this.registeredProject = project;
+    }
+
+    public String getRegisteredProject() {
+        return registeredProject;
+    }
+
     public void registerProject(Project p) {
 
         this.registeredProjectStatus = ApplicationStatus.Pending;
-        p.getManager().applicationDecision(p.getProjectName(),this);
-        System.out.println(name + " registered for project: " + p.getProjectName() + ". Awaiting approval.");
+        p.getManager().applicationDecision(p.getProjectName(), this);
+        System.out.println(name + " registering for project: " + p.getProjectName() + ". Awaiting approval.");
     }
 
     public void getProjectDetails() {
