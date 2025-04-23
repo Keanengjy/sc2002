@@ -1,12 +1,7 @@
 package person;
 
 import project.Project;
-
-enum UserRole {
-    Applicant,
-    HDBOfficer,
-    HDBManager
-}
+import project.UserRole;
 
 interface User {
 

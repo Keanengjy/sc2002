@@ -1,24 +1,29 @@
-package people;
+package person;
 
+import project.ApplicationStatus;
+import project.FlatType;
+import project.Visibility;
+import person.MaritalStatus;
+import project.UserRole;
 import java.util.List;
-import projects.Project;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-enum UserRole {
-    Applicant,
-    HDBOfficer,
-    HDBManager
-}
-
-enum Visibility {
-    on,
-    off
-}
+import project.Project;
 
 
 public class HDBManager extends AbstractUser {
     private List<HDBOfficer> HDBOfficersUnder;
-    private List<Project> managedProjects;
-    private List<String> pendingApprovals;
+    private String managedProjects;
+    private Map<String, HDBOfficer> pendingApprovals;
+
+    public HDBManager(String name, String NRIC, int age, String maritalStatus, String password) {
+        super(name, NRIC, age, maritalStatus, password);
+        this.pendingApprovals = new HashMap<>();
+        this.HDBOfficersUnder = new ArrayList<>();
+        this.managedProjects = "";
+    }
 
     public void createProject() {}
     public void deleteProject(String name) {}
@@ -26,7 +31,19 @@ public class HDBManager extends AbstractUser {
     public void toggleApplication(String decision) {}
     public void replyEnquiry(String reply) {}
     public void approveOfficer() {}
-    public void applicationDecision(String decision) {}
+
+    public void applicationDecision(String projectName, HDBOfficer officer) {
+        pendingApprovals.put(projectName, officer);
+    }
+    
+    public void processPendingApprovals() {
+        for (Map.Entry<String, HDBOfficer> entry : pendingApprovals.entrySet()) {
+            String project = entry.getKey();
+            HDBOfficer officer = entry.getValue();
+
+            System.out.println("Pending approval for project: " + project + " - Officer: " + officer.getName());
+        }
+    }
 
     @Override
     public UserRole getRole() {

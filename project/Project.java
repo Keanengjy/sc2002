@@ -1,40 +1,34 @@
 package project;
 
+import project.FlatType;
+import project.Visibility;
+import person.MaritalStatus;
+import project.ApplicationStatus;
+
 import java.util.List;
 import java.util.Map;
 
-enum ApplicationStatus {
-    Pending,
-    Approved,
-    Rejected,
-    Booked
-} 
-
-enum Visibility {
-    on,
-    off
-}
-
-enum FlatType {
-    TwoRoom,
-    ThreeRoom
-}
+import person.HDBManager;
+import person.HDBOfficer;
 
 public class Project {
     // public static List<String> allProject;
     private String projectName;
     private String neighborhood;
-    private String manager;
+    private HDBManager manager;
     private String projectID;
     private ApplicationStatus applicationStatus;
     private boolean visibility;
     private String applicationOpeningDate;
     private String applicationClosingDate;
     private Map<FlatType, Integer> availableFlats;
+    private List<HDBOfficer> officers;
     // private List<HDBFlat> flats;
 
-    public Project(String projectName, String neighborhood, String manager, String projectID, ApplicationStatus applicationStatus,boolean visibility,
-            String applicationOpeningDate, String applicationClosingDate, Map<FlatType, Integer> availableFlats) {
+    public Project(String projectName, String neighborhood, HDBManager manager, String projectID,
+            ApplicationStatus applicationStatus, boolean visibility,
+            String applicationOpeningDate, String applicationClosingDate,
+            Map<FlatType, Integer> availableFlats, List<HDBOfficer> officers) {
         this.projectName = projectName;
         this.neighborhood = neighborhood;
         this.manager = manager;
@@ -44,6 +38,7 @@ public class Project {
         this.applicationOpeningDate = applicationOpeningDate;
         this.applicationClosingDate = applicationClosingDate;
         this.availableFlats = availableFlats;
+        this.officers = officers; // Assign list of officers
     }
 
     public void setProjectName(String name) {
@@ -54,7 +49,7 @@ public class Project {
         this.neighborhood = neighborhood;
     }
 
-    public void setManager(String manager) {
+    public void setManager(HDBManager manager) {
         this.manager = manager;
     }
 
@@ -92,7 +87,7 @@ public class Project {
         return neighborhood;
     }
 
-    public String getManager() {
+    public HDBManager getManager() {
         return manager;
     }
 
@@ -116,7 +111,17 @@ public class Project {
         return applicationClosingDate;
     }
 
-    public Map<FlatType, Integer> getAvailableFlats() { return availableFlats; }
+    public Map<FlatType, Integer> getAvailableFlats() {
+        return availableFlats;
+    }
+
+    public List<HDBOfficer> getOfficers() {
+        return officers;
+    }
+
+    public void addOfficer(HDBOfficer officer) {
+        this.officers.add(officer);
+    }
 
     // public List<HDBFlat> getFlats() { return flats; }
 

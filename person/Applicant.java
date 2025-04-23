@@ -1,29 +1,18 @@
 package person;
 
+import project.ApplicationStatus;
+import project.FlatType;
+import project.Visibility;
+import person.MaritalStatus;
+import project.UserRole;
 import project.HDBFlat;
 import project.Project;
-
-enum UserRole {
-    Applicant,
-    HDBOfficer,
-    HDBManager
-}
-
-enum MaritalStatus {
-    Single,
-    Married
-}
-
-enum FlatType {
-    TwoRoom,
-    ThreeRoom
-}
 
 public class Applicant extends AbstractUser{
     private String appliedProject;
     private String applicationStatus;
     private HDBFlat selectedFlat;
-    private MaritalStatus maritalStatus; // Add maritalStatus field
+    private String maritalStatus; // Add maritalStatus field
 
     public Applicant(String appliedProject, String applicationStatus, HDBFlat selectedFlat, MaritalStatus maritalStatus) {
         this.appliedProject = appliedProject;
@@ -32,11 +21,11 @@ public class Applicant extends AbstractUser{
         this.maritalStatus = maritalStatus; // Initialize maritalStatus
     }
 
-    public MaritalStatus getMaritalStatus() { // Add getter for maritalStatus
+    public String getMaritalStatus() { // Update return type for getter
         return maritalStatus;
     }
 
-    public void setMaritalStatus(MaritalStatus maritalStatus) { // Add setter for maritalStatus
+    public void setMaritalStatus(String maritalStatus) { // Update setter for maritalStatus
         this.maritalStatus = maritalStatus;
     }
 

@@ -1,26 +1,27 @@
 package person;
 
+import person.MaritalStatus;
 import project.Project;
-
-enum MaritalStatus {
-    Single,
-    Married
-};
-
-enum UserRole {
-    Applicant,
-    HDBOfficer,
-    HDBManager
-}
+import project.UserRole;
 
 abstract class AbstractUser implements User {
     protected String name;
     protected String NRIC;
     protected int age;
-    protected MaritalStatus maritalStatus;
+    protected String maritalStatus;
     protected String password;
     protected boolean eligibilityCriteria; // Indicates if the user has access permissions
     protected boolean loggedIn;
+
+    public AbstractUser(String name, String NRIC, int age, String maritalStatus, String password) {
+        this.name = name;
+        this.NRIC = NRIC;
+        this.age = age;
+        this.maritalStatus = maritalStatus;
+        this.password = password;
+        this.eligibilityCriteria = false; // Default to no access permissions
+        this.loggedIn = false; // Default to not logged in
+    }
 
     public String getName() { return name; } // Add getter for name
     public void setName(String name) { this.name = name; } // Add setter for name
@@ -28,8 +29,8 @@ abstract class AbstractUser implements User {
     public void setAge(int age) { this.age = age; } // Add setter for age   
     public String getNRIC() { return NRIC; } // Add getter for NRIC
     public void setNRIC(String NRIC) { this.NRIC = NRIC; } // Add setter for NRIC
-    public MaritalStatus getMaritalStatus() { return maritalStatus; } // Add getter for maritalStatus
-    public void setMaritalStatus(MaritalStatus maritalStatus) { this.maritalStatus = maritalStatus; } // Add setter for maritalStatus
+    public String getMaritalStatus() { return maritalStatus; } // Update return type for getter
+    public void setMaritalStatus(String maritalStatus) { this.maritalStatus = maritalStatus; } // Update setter for maritalStatus
     public String getPassword() { return password; } // Add getter for password
     public void setPassword(String password) { this.password = password; } // Add setter for password
     public boolean isLoggedIn() { return loggedIn; } // Add getter for loggedIn 

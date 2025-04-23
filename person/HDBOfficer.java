@@ -1,25 +1,44 @@
 package person;
 
+import project.ApplicationStatus;
+import person.HDBManager;
 import project.Project;
-
-enum UserRole {
-    Applicant,
-    HDBOfficer,
-    HDBManager
-}
+import project.UserRole;
+import java.util.Map;
 
 public class HDBOfficer extends AbstractUser {
-    private String registeredProjects;
-    private String registeredProjectStatus;
+    private String projects;
+    private Project registeredProject;
+    private ApplicationStatus registeredProjectStatus;
 
-    public void registerProject(Project p) {}
-    public void getProjectDetails() {}
+    public HDBOfficer(String name, String NRIC, int age, String maritalStatus, String password, String projects) {
+        super(name, NRIC, age, maritalStatus, password);
+        this.projects = projects;
+        this.registeredProjectStatus = ApplicationStatus.Pending;
+    }
+
+    public void registerProject(Project p) {
+
+        this.registeredProjectStatus = ApplicationStatus.Pending;
+        p.getManager().applicationDecision(p.getProjectName(),this);
+        System.out.println(name + " registered for project: " + p.getProjectName() + ". Awaiting approval.");
+    }
+
+    public void getProjectDetails() {
+        // if (registeredProjectStatus == ApplicationStatus.Approved) {
+        //     HDBManager manager = new HDBManager();
+        //     manager.approveOfficer();
+        // }
+    }
     public void applyEnquiryReply(String enquiry) {}
     public void updateFlatCount() {}
     public void generateReceipt() {}
     public void updateApplicationList() {}
     public void updateInfo() {}
-    public void viewStatus() {}
+
+    public void viewStatus() {
+        System.out.println("Status: " + registeredProjectStatus);
+    }
 
     @Override
     public UserRole getRole() {
@@ -30,6 +49,10 @@ public class HDBOfficer extends AbstractUser {
     public boolean checkEligibility(Project project) {
         // Example rule: Officers are eligible if they are logged in and have any project assigned
 
-        return this.loggedIn && registeredProjects != null && !registeredProjects.isEmpty();
+        return this.loggedIn && registeredProject != null && registeredProject.isEmpty();
+    }
+
+    public boolean isEmpty(){
+        return registeredProject == null;
     }
 }
