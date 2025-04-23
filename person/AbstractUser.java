@@ -24,22 +24,24 @@ public abstract class AbstractUser implements User{
         this.loggedIn = false;
     }
 
-    
-    public void changePassword(String oldPassword, String newPassword) throws InvalidPasswordException {
-        if (!this.password.equals(oldPassword)) {
-            throw new InvalidPasswordException("Current password is incorrect");
+
+    public void changePassword(String oldPassword, String newPassword) {
+        try {
+            if (!this.password.equals(oldPassword)) {
+                throw new InvalidPasswordException("Current password is incorrect");
+            }
+            if (newPassword == null || newPassword.isEmpty()) {
+                throw new InvalidPasswordException("New password cannot be empty");
+            }
+            this.password = newPassword;
+            System.out.println("Password changed successfully. Please re-login.");
+            logout();
+        } catch (InvalidPasswordException e) {
+            System.out.println("Error: " + e.getMessage());
         }
-        if (newPassword == null || newPassword.isEmpty()) {
-            throw new InvalidPasswordException("New password cannot be empty");
-        }
-        this.password = newPassword;
-        System.out.println("Password changed successfully. Please re-login.");
-        logout();
     }
 
-    /**
-     * Logs the user into the system.
-     */
+    
     public void login(String username, String password) {
         if (this.NRIC.equals(username) && this.password.equals(password)) {
             this.loggedIn = true;
@@ -50,9 +52,6 @@ public abstract class AbstractUser implements User{
 
     }
 
-    /**
-     * Logs the user out of the system.
-     */
     public void logout() {
         if (this.loggedIn) {
             this.loggedIn = false;

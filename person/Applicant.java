@@ -5,15 +5,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
+import project.ApplicationStatus;
 import project.Enquiry;
 import project.HDBFlat;
-import project.Project;
 
 public class Applicant extends AbstractUser {
     private Enquiry enquiry;
     private String appliedProject;
-    private String applicationStatus;
+    private ApplicationStatus applicationStatus;
     private HDBFlat selectedFlat;
 
     public Applicant(String name, String NRIC, int age, MaritalStatus maritalStatus, 
@@ -36,11 +35,11 @@ public class Applicant extends AbstractUser {
         this.appliedProject = appliedProject;
     }
     
-    public String getApplicationStatus() {
+    public ApplicationStatus getApplicationStatus() {
         return applicationStatus;
     }
     
-    public void setApplicationStatus(String applicationStatus) {
+    public void setApplicationStatus(ApplicationStatus applicationStatus) {
         this.applicationStatus = applicationStatus;
     }
     
@@ -74,7 +73,7 @@ public class Applicant extends AbstractUser {
             return;
         }
         
-        // Logic to apply for a project would be implemented here
+        // ADD APPLY PROJ METHOD
         System.out.println("Application process initiated.");
     }
     
@@ -83,13 +82,12 @@ public class Applicant extends AbstractUser {
             System.out.println("Please log in to book a flat.");
             return;
         }
-        //CHECK AGAIN FOR APPSTATUS IN BOTH APPLICANT & PROJECT CLASS
-        if (Project.applicationStatus == null || !applicationStatus.equals("Successful")) {
+        if (getApplicationStatus() == null || getApplicationStatus() != ApplicationStatus.Successful) {
             System.out.println("You cannot book a flat until your application is successful.");
             return;
         }
         
-        // Logic to book a flat would be implemented here
+        // ADD BOOK FLAT METHOD
         System.out.println("Flat booking process initiated.");
     }
     

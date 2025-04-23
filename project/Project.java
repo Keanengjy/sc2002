@@ -1,13 +1,9 @@
 package project;
 
-import java.util.ArrayList;
-import java.util.List;
 import person.Applicant;
-import person.HDBOfficer;
 import person.MaritalStatus;
 
-
-
+/*
 class DuplicateProjectException extends Exception {
     public DuplicateProjectException(String message) {
         super(message);
@@ -19,6 +15,7 @@ class ProjectNotFoundException extends Exception {
         super(message);
     }
 }
+*/
 
 public class Project {
     private String projectName;
@@ -55,13 +52,22 @@ public class Project {
     public String getNeighborhood() {
         return neighborhood;
     }
+    public void setNeighborhood(String neighborhood) {
+        this.neighborhood = neighborhood;
+    }
 
     public String getManager() {
         return manager;
     }
+    public void setManager(String manager) {
+        this.manager = manager;
+    }
 
     public int getProjectID() {
         return projectID;
+    }
+    public void setProjectID(int projectID) {
+        this.projectID = projectID;
     }
 
     public ApplicationStatus getApplicationStatus() {
@@ -80,64 +86,62 @@ public class Project {
         this.visibility = visibility;
     }
 
-    public HDBOfficer getHdbOfficer() {
-        return hdbOfficer;
+    public String getHdbOfficer() {
+        return HDBOfficer;
     }
 
-    public void setHdbOfficer(HDBOfficer hdbOfficer) {
-        this.hdbOfficer = hdbOfficer;
+    public void setHdbOfficer(String HDBOfficer) {
+        this.HDBOfficer = HDBOfficer;
     }
     
     public String getApplicationOpeningDate() {
-        return applicationOpeningDate;
+        return ApplicationOpeningDate;
     }
-    
+    public void setApplicationOpeningDate(String applicationOpeningDate) {
+        this.ApplicationOpeningDate = applicationOpeningDate;
+    }
+
     public String getApplicationClosingDate() {
-        return applicationClosingDate;
+        return ApplicationClosingDate;
+    }
+    public void setApplicationClosingDate(String applicationClosingDate) {
+        this.ApplicationClosingDate = applicationClosingDate;
     }
     
     
-    public void addFlat(HDBFlat flat) {
-        availableFlats.add(flat);
+    public int getAvailableHDBOfficerSlots() {
+        return AvailableHDBOfficerSlots;
     }
     
-    public int getAvailableOfficerSlots() {
-        return availableOfficerSlots;
+    public void setAvailableHDBOfficerSlots(int availableHDBOfficerSlots) {
+        this.AvailableHDBOfficerSlots = availableHDBOfficerSlots;
     }
     
-    public void decrementOfficerSlots() {
-        if (availableOfficerSlots > 0) {
-            availableOfficerSlots--;
-        }
-    }
     
-    /**
-     * Gets the detailed information about the project.
-     * 
-     * @return The project details
-     */
-    public String getProjectDetails() {
-        StringBuilder details = new StringBuilder();
-        details.append("Project Name: ").append(projectName).append("\n");
-        details.append("Neighborhood: ").append(neighborhood).append("\n");
-        details.append("Project ID: ").append(projectID).append("\n");
-        details.append("Manager: ").append(manager).append("\n");
-        details.append("Application Status: ").append(applicationStatus).append("\n");
-        details.append("Visibility: ").append(visibility ? "Visible" : "Hidden").append("\n");
-        details.append("Application Period: ").append(applicationOpeningDate).append(" to ")
-               .append(applicationClosingDate).append("\n");
-        details.append("Available Officer Slots: ").append(availableOfficerSlots).append("\n");
-        details.append("Available Flats: ").append(availableFlats.size()).append("\n");
+    public String filterProject(String details) {
+        StringBuilder filteredInfo = new StringBuilder();
         
-        return details.toString();
+        if (details.contains("name")) {
+            filteredInfo.append("Project Name: ").append(this.projectName).append("\n");
+        }
+        if (details.contains("neighborhood")) {
+            filteredInfo.append("Neighborhood: ").append(this.neighborhood).append("\n");
+        }
+        if (details.contains("manager")) {
+            filteredInfo.append("Manager: ").append(this.manager).append("\n");
+        }
+        if (details.contains("status")) {
+            filteredInfo.append("Application Status: ").append(this.applicationStatus).append("\n");
+        }
+        if (details.contains("dates")) {
+            filteredInfo.append("Opening Date: ").append(this.ApplicationOpeningDate).append("\n");
+            filteredInfo.append("Closing Date: ").append(this.ApplicationClosingDate).append("\n");
+        }
+        
+        return filteredInfo.toString();
     }
     
-    /**
-     * Checks if an applicant is eligible for this project.
-     * 
-     * @param applicant The applicant to check
-     * @return True if eligible, false otherwise
-     */
+
     public boolean isEligibleForApplicant(Applicant applicant) {
         if (!visibility) {
             return false; // Project not visible
