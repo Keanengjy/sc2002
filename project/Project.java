@@ -7,6 +7,7 @@ import project.ApplicationStatus;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,14 +25,14 @@ public class Project {
     private String applicationOpeningDate;
     private String applicationClosingDate;
     private int AvailableHDBOfficerSlots;
-    private EnumMap<FlatType, Integer> flatsByType;
-
+    private Map<HDBFlat, Integer> availableFlats;
     private List<HDBOfficer> officers;
     private final Map<FlatType, Integer> Typeflats = new EnumMap<>(FlatType.class);
 
     public Project(String projectName, String neighborhood, HDBManager manager, String projectID,
             ApplicationStatus applicationStatus, boolean visibility,
             String applicationOpeningDate, String applicationClosingDate,
+            Map<HDBFlat, Integer> availableFlats,
             List<HDBOfficer> officers, int AvailableHDBOfficerSlots,
             int twoRoomQty, int threeRoomQty) {
         this.projectName = projectName;
@@ -42,6 +43,7 @@ public class Project {
         this.visibility = visibility;
         this.applicationOpeningDate = applicationOpeningDate;
         this.applicationClosingDate = applicationClosingDate;
+        this.availableFlats = availableFlats; // Assign available flats
         this.officers = officers; // Assign list of officers
         this.AvailableHDBOfficerSlots = AvailableHDBOfficerSlots;
 
@@ -78,6 +80,22 @@ public class Project {
     public Map<FlatType, Integer> getFlats() {
         return Typeflats;
     }
+
+    public Map<HDBFlat, Integer> getAvailableFlats() {
+        return new HashMap<>(availableFlats);
+    }
+
+    public Map<FlatType, Integer> getAvailableFlatsByType() {
+        Map<FlatType, Integer> byType = new EnumMap<>(FlatType.class);
+        for (Map.Entry<HDBFlat, Integer> entry : availableFlats.entrySet()) {
+            FlatType type = entry.getKey().getFlatType();
+            int qty = entry.getValue();
+            byType.merge(type, qty, Integer::sum);
+        }
+        return byType;
+    }
+
+
 
     // public void addProject(String project) { allProject.add(project); }
     // public void setProjectName(String name) { this.projectName = name; }

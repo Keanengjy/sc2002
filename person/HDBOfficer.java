@@ -81,9 +81,9 @@ public class HDBOfficer extends AbstractUser {
 
         scanner.close();
     }
-    
-    public boolean updateFlatCount(Project project, FlatType type) {
-        return HDBFlat.decrementUnits(project, type);
+
+    public boolean updateFlatCount(Project project, FlatType flatType) {
+        return HDBFlat.decrementFlat(project, flatType); // Update the flat count in the Project class
     }
 
     public String[] getApplication(String nric, Map<String, Applicant> applicants) {
@@ -104,8 +104,21 @@ public class HDBOfficer extends AbstractUser {
         return null;
     }
 
-    public void updateInfo() {
+    public boolean updateInfo(String nric, Map<String, Applicant> applicants, Project project, FlatType flat) {
+        // Check if the NRIC exists in the map
+        Applicant a = applicants.get(nric);
+        if (a == null) {
+            return false;
+        }
+        if (!"Successful".equalsIgnoreCase(a.getApplicationStatus())) {
+            return false;  // only book if they were marked successful
+        }
 
+        a.setApplicationStatus("Booked");
+        HDBFlat chosen = new HDBFlat(flat, 0.0, project.getNeighborhood());
+        a.setSelectedFlat(chosen);
+
+        return true; 
     }
 
     public void generateReceipt() {

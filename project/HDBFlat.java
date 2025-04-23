@@ -1,6 +1,7 @@
 package project;
 
 import java.util.Map;
+import java.util.Objects;
 
 import person.HDBManager;
 import person.HDBOfficer;
@@ -58,17 +59,16 @@ public class HDBFlat {
     public void setBooked(boolean booked) {
         this.isBooked = booked;
     }
-
-    public static boolean decrementUnits(Project project, FlatType type) {
-        Map<FlatType,Integer> stock = project.getFlats(); // the EnumMap you seeded
-        int remaining = stock.getOrDefault(type, 0);
-        if (remaining > 0) {
-            stock.put(type, remaining - 1);
-            return true;        // booking succeeded
-        }
-        return false;           // no units left
-    }
     
+    public static boolean decrementFlat(Project project, FlatType flatType) {
+        // Implement logic to decrement the flat count for the given project and flat type
+        // Example logic (you may need to adjust based on your actual Project and FlatType structure):
+        if (project.getFlats().containsKey(flatType) && project.getFlats().get(flatType) > 0) {
+            project.getFlats().put(flatType, project.getFlats().get(flatType) - 1);
+            return true;
+        }
+        return false;
+    }
 
     public void resetBooking() {
         isBooked = false;

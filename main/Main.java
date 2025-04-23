@@ -3,6 +3,7 @@ package main;
 import project.ApplicationStatus;
 import project.Enquiry;
 import project.FlatType;
+import project.HDBFlat;
 import project.Visibility;
 import person.MaritalStatus;
 
@@ -62,7 +63,7 @@ public class Main {
 
             // // 2. create officer and let them reply
             HDBOfficer officer = ObjectCreate.officerMap.get("Daniel");
-            
+
             // officer.replyEnquiry(enquiry);
 
             // // 3. print stored reply to verify
@@ -72,31 +73,40 @@ public class Main {
             
             //Book flats
 
-            // System.out.println("Initial stock: " + p.getFlats());
-            // for (int i = 1; i <= 3; i++) {
-            //     boolean ok = officer.updateFlatCount(p, FlatType.TwoRoom);
-            //     System.out.printf("  Attempt %d to book 2 room: %s%n",
-            //                       i, ok ? "SUCCESS" : "FAILED");
-            // }
-            //         // Book three 3‑room units
-            // for (int i = 1; i <= 3; i++) {
-            //     boolean ok = officer.updateFlatCount(p, FlatType.ThreeRoom);
-            //     System.out.printf("  Attempt %d to book 3 room: %s%n",
-            //                     i, ok ? "SUCCESS" : "FAILED");
-            // }
+            // 1) Print initial stock
+            System.out.println("Initial stock: " + p.getFlats());
 
-            // System.out.println("\nFinal stock: " + p.getFlats());
+            // 2) Extract HDBFlat keys by type
+
+            // 3) Book three 2-room units
+            for (int i = 1; i <= 3; i++) {
+                boolean ok = officer.updateFlatCount(p, FlatType.TwoRoom);
+                System.out.printf("  Attempt %d to book 2-room: %s%n",
+                                i, ok ? "SUCCESS" : "FAILED");
+            }
+
+            // 4) Book three 3-room units
+            for (int i = 1; i <= 3; i++) {
+                boolean ok = officer.updateFlatCount(p, FlatType.ThreeRoom);
+                System.out.printf("  Attempt %d to book 3-room: %s%n",
+                                i, ok ? "SUCCESS" : "FAILED");
+            }
+
+            // 5) Print final stock
+            System.out.println("\nFinal stock: " + p.getFlats());
+            
+
 
             // Initialize applicantMap
 
-            String[] result = officer.getApplication("S1234567A", ObjectCreate.applicantMap);
+            // String[] result = officer.getApplication("S1234567A", ObjectCreate.applicantMap);
 
-            if (result != null) {
-                System.out.println("Applied project: " + result[0]);
-                System.out.println("Selected flat : " + result[1]);
-            } else {
-                System.out.println("NRIC not found.");
-            }
+            // if (result != null) {
+            //     System.out.println("Applied project: " + result[0]);
+            //     System.out.println("Selected flat : " + result[1]);
+            // } else {
+            //     System.out.println("NRIC not found.");
+            // }
 
             // Write to file example
             // data.add(List.of("John Doe", "12345678A"));

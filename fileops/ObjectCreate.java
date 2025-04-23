@@ -53,9 +53,9 @@ public class ObjectCreate {
 
             // ── build projects ────────────────────────────
             for (List<String> record : projectData.subList(1, projectData.size())) {
-                // Map<FlatType,Integer> flats = new HashMap<>();
-                // flats.put(FlatType.TwoRoom , Integer.parseInt(record.get(3).trim()));
-                // flats.put(FlatType.ThreeRoom, Integer.parseInt(record.get(6).trim()));
+                Map<FlatType,Integer> flats = new HashMap<>();
+                flats.put(FlatType.TwoRoom , Integer.parseInt(record.get(3).trim()));
+                flats.put(FlatType.ThreeRoom, Integer.parseInt(record.get(6).trim()));
 
                 HDBManager manager = managerMap.get(record.get(10).trim());
                 if (manager==null) continue;
@@ -75,6 +75,19 @@ public class ObjectCreate {
                     }
                 }
 
+                int twoQty = Integer.parseInt(record.get(3).trim());
+                int threeQty = Integer.parseInt(record.get(6).trim());
+                double twoPrice   = Double.parseDouble(record.get(4).trim());
+                double threePrice = Double.parseDouble(record.get(7).trim());
+                String location   = record.get(1).trim();
+
+                HDBFlat twoRoom = new HDBFlat(FlatType.TwoRoom, twoPrice, location);
+                HDBFlat threeRoom = new HDBFlat(FlatType.ThreeRoom, threePrice, location);
+
+                Map<HDBFlat,Integer> flatStock = new HashMap<>();
+                flatStock.put(twoRoom, twoQty);
+                flatStock.put(threeRoom, threeQty);
+
                 Project p = new Project(
                         record.get(0).trim(),   // name
                         record.get(1).trim(),   // neighbourhood
@@ -84,7 +97,7 @@ public class ObjectCreate {
                         true,
                         record.get(8).trim(),   // open
                         record.get(9).trim(),   // close
-                        // flats,
+                        flatStock,              // updated to include flatStock
                         projectOfficers,
                         Integer.parseInt(record.get(11).trim()),
                         Integer.parseInt(record.get(3).trim()),
