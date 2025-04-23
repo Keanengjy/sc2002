@@ -1,6 +1,6 @@
 package person;
 public enum UserRole {
-    Appliicant,
+    Applicant,
     HDBOfficer,
     HDBManager
 }

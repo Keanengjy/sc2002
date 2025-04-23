@@ -2,22 +2,11 @@ package project;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import person.Applicant;
 import person.HDBOfficer;
 import person.MaritalStatus;
 
-enum ApplicationStatus {
-    PENDING,
-    SUCCESSFUL,
-    UNSUCCESSFUL,
-    BOOKED
-}
 
-enum Visibility {
-    ON,
-    OFF
-}
 
 class DuplicateProjectException extends Exception {
     public DuplicateProjectException(String message) {
@@ -38,41 +27,30 @@ public class Project {
     private int projectID;
     private ApplicationStatus applicationStatus;
     private boolean visibility;
-    private HDBOfficer hdbOfficer;
-    private String applicationOpeningDate;
-    private String applicationClosingDate;
-    private List<HDBFlat> availableFlats;
-    private int availableOfficerSlots;
-    
-    /**
-     * Constructs a new Project with the specified parameters.
-     * 
-     * @param projectName The name of the project
-     * @param neighborhood The neighborhood of the project
-     * @param manager The manager of the project
-     * @param projectID The ID of the project
-     * @param applicationOpeningDate The opening date for applications
-     * @param applicationClosingDate The closing date for applications
-     * @param availableOfficerSlots The number of slots available for officers
-     */
-    public Project(String projectName, String neighborhood, String manager, int projectID, 
-                  String applicationOpeningDate, String applicationClosingDate, int availableOfficerSlots) {
+    private String HDBOfficer;
+    private String ApplicationOpeningDate;
+    private String ApplicationClosingDate;
+    private int AvailableHDBOfficerSlots;
+
+    public Project(String projectName, String neighborhood, String manager, int projectID) {
         this.projectName = projectName;
         this.neighborhood = neighborhood;
         this.manager = manager;
         this.projectID = projectID;
-        this.applicationStatus = ApplicationStatus.PENDING;
-        this.visibility = true; // Default to visible
-        this.applicationOpeningDate = applicationOpeningDate;
-        this.applicationClosingDate = applicationClosingDate;
-        this.availableFlats = new ArrayList<>();
-        this.availableOfficerSlots = availableOfficerSlots;
+        this.applicationStatus = ApplicationStatus.Pending;
+        this.visibility = false;  // Default to "off"
+        this.AvailableHDBOfficerSlots = 0;
     }
+    
 
     // Getters and setters
     public String getProjectName() {
         return projectName;
     }
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+    //STOPPED AT FILTER PROJ
 
     public String getNeighborhood() {
         return neighborhood;
@@ -118,9 +96,6 @@ public class Project {
         return applicationClosingDate;
     }
     
-    public List<HDBFlat> getAvailableFlats() {
-        return new ArrayList<>(availableFlats); // Return a copy to preserve encapsulation
-    }
     
     public void addFlat(HDBFlat flat) {
         availableFlats.add(flat);

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import project.Enquiry;
 import project.HDBFlat;
+import project.Project;
 
 public class Applicant extends AbstractUser {
     private Enquiry enquiry;
@@ -21,6 +22,10 @@ public class Applicant extends AbstractUser {
         this.appliedProject = null;
         this.applicationStatus = null;
         this.selectedFlat = null;
+    }
+
+    public UserRole getRole() {
+        return UserRole.Applicant;
     }
 
     public String getAppliedProject() {
@@ -47,30 +52,52 @@ public class Applicant extends AbstractUser {
         this.selectedFlat = selectedFlat;
     }
     
-    // Methods from class diagram
+
     public void viewProject() {
-        // Implementation to view project details
-        System.out.println("Viewing project: " + appliedProject);
+        if (!loggedIn) {
+            System.out.println("Please log in to view projects.");
+            return;
+        }
+        
+        System.out.println("Viewing available projects...");
+        // display available projects 
     }
     
     public void applyProject() {
-        // Implementation to apply for a project
-        System.out.println("Applying for project: " + appliedProject);
-        // Logic to apply for a project would go here
+        if (!loggedIn) {
+            System.out.println("Please log in to apply for a project.");
+            return;
+        }
+        
+        if (appliedProject != null) {
+            System.out.println("You have already applied for a project: " + appliedProject);
+            return;
+        }
+        
+        // Logic to apply for a project would be implemented here
+        System.out.println("Application process initiated.");
     }
     
     public void bookFlat() {
-        // Implementation to book a flat
-        if (selectedFlat != null) {
-            System.out.println("Booking flat: " + selectedFlat.getUnitNo() + " in " + appliedProject);
-            // Logic to book a flat would go here
-        } else {
-            System.out.println("No flat selected to book");
+        if (!loggedIn) {
+            System.out.println("Please log in to book a flat.");
+            return;
         }
+        //CHECK AGAIN FOR APPSTATUS IN BOTH APPLICANT & PROJECT CLASS
+        if (Project.applicationStatus == null || !applicationStatus.equals("Successful")) {
+            System.out.println("You cannot book a flat until your application is successful.");
+            return;
+        }
+        
+        // Logic to book a flat would be implemented here
+        System.out.println("Flat booking process initiated.");
     }
     
     public boolean withdrawApplication() {
-        // Implementation to withdraw an application
+        if (!loggedIn) {
+            System.out.println("Please log in to withdraw your application.");
+            return false;
+        }
         if (appliedProject != null) {
             System.out.println("Withdrawing application for project: " + appliedProject);
             appliedProject = null;
@@ -83,11 +110,7 @@ public class Applicant extends AbstractUser {
     }
     
     public String editEnquiry() {
-        // Implementation to edit an enquiry
-        // This would typically interact with Enquiry objects
-        
-        // Check if user is logged in
-        if (!isLoggedIn()) {
+        if (!loggedIn()) {
             return "You must be logged in to edit an enquiry";
         }
         
@@ -156,43 +179,40 @@ public class Applicant extends AbstractUser {
 */
 
     public String submitEnquiry() {
-    // Implementation to submit an enquiry
-    
-    // Check if user is logged in
-    if (!isLoggedIn()) {
-        return "You must be logged in to submit an enquiry";
+        if (!loggedIn()) {
+            return "You must be logged in to submit an enquiry";
+        }
+        
+        // In a real implementation, you would collect enquiry details from user input
+        // Here we simulate creating a new enquiry
+        
+        // Create a new Map for the message (as per the class diagram)
+        Map<String, String> messageMap = new HashMap<>();
+        messageMap.put("subject", "Enquiry about housing project");
+        messageMap.put("body", "I would like more information about the application process.");
+        
+        // Create a new enquiry
+        Enquiry newEnquiry = new Enquiry();
+        newEnquiry.setMessage(messageMap);
+        newEnquiry.setEnquiryID(generateNewEnquiryID()); // Generate a unique ID
+        newEnquiry.setSenderID(Integer.parseInt(getNRIC())); // Set sender ID to applicant's ID
+        // Leave response and responderID as null/default since it's a new enquiry
+        
+        // Simulate saving the enquiry
+        boolean saveSuccess = saveNewEnquiry(newEnquiry);
+        
+        if (saveSuccess) {
+            return "Enquiry submitted successfully with ID: " + newEnquiry.getEnquiryID();
+        } else {
+            return "Failed to submit enquiry. Please try again.";
+        }
     }
-    
-    // In a real implementation, you would collect enquiry details from user input
-    // Here we simulate creating a new enquiry
-    
-    // Create a new Map for the message (as per the class diagram)
-    Map<String, String> messageMap = new HashMap<>();
-    messageMap.put("subject", "Enquiry about housing project");
-    messageMap.put("body", "I would like more information about the application process.");
-    
-    // Create a new enquiry
-    Enquiry newEnquiry = new Enquiry();
-    newEnquiry.setMessage(messageMap);
-    newEnquiry.setEnquiryID(generateNewEnquiryID()); // Generate a unique ID
-    newEnquiry.setSenderID(Integer.parseInt(getNRIC())); // Set sender ID to applicant's ID
-    // Leave response and responderID as null/default since it's a new enquiry
-    
-    // Simulate saving the enquiry
-    boolean saveSuccess = saveNewEnquiry(newEnquiry);
-    
-    if (saveSuccess) {
-        return "Enquiry submitted successfully with ID: " + newEnquiry.getEnquiryID();
-    } else {
-        return "Failed to submit enquiry. Please try again.";
-    }
-}
     
 public boolean deleteEnquiry(int enquiryID) {
     // Implementation to delete an enquiry with the given ID
     
     // Check if user is logged in
-    if (!isLoggedIn()) {
+    if (!loggedIn()) {
         System.out.println("You must be logged in to delete an enquiry");
         return false;
     }

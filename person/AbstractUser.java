@@ -1,6 +1,8 @@
 package person;
 
-abstract public class AbstractUser implements User{
+import project.Project;
+
+public abstract class AbstractUser implements User{
     protected String name;
     protected String NRIC;
     protected int age;
@@ -22,14 +24,7 @@ abstract public class AbstractUser implements User{
         this.loggedIn = false;
     }
 
-    /**
-     * Calculates the eligibility criteria for the user.
-     */
-    protected abstract void calculateEligibilityCriteria();
-
-    /**
-     * Changes the user's password.
-     */
+    
     public void changePassword(String oldPassword, String newPassword) throws InvalidPasswordException {
         if (!this.password.equals(oldPassword)) {
             throw new InvalidPasswordException("Current password is incorrect");
@@ -45,33 +40,49 @@ abstract public class AbstractUser implements User{
     /**
      * Logs the user into the system.
      */
-    public void login(String username, String password) throws AuthenticationException {
-        if (!this.nric.equals(username)) {
-            throw new AuthenticationException("Invalid NRIC");
+    public void login(String username, String password) {
+        if (this.NRIC.equals(username) && this.password.equals(password)) {
+            this.loggedIn = true;
+            System.out.println("Login successful for user: " + this.name);
+        } else {
+            System.out.println("Login failed. Invalid credentials.");
         }
-        if (!this.password.equals(password)) {
-            throw new AuthenticationException("Incorrect password");
-        }
-        this.isLoggedIn = true;
-        System.out.println("Login successful. Welcome, " + this.name + "!");
+
     }
 
     /**
      * Logs the user out of the system.
      */
     public void logout() {
-        this.isLoggedIn = false;
-        System.out.println("You have been logged out successfully.");
+        if (this.loggedIn) {
+            this.loggedIn = false;
+            System.out.println("User logged out successfully.");
+        } else {
+            System.out.println("No user is currently logged in.");
+        }
     }
 
-    // Getters as per User interface
+    public boolean checkEligibility(Project project) {
+        // Base eligibility check - can be overridden by subclasses
+        return this.eligibilityCriteria;
+    }
+
+    public abstract UserRole getRole();
+
 
     public String getName() {
         return name;
     }
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getNRIC() {
-        return nric;
+        return NRIC;
+    }
+
+    public void setNRIC(String userID) {
+        this.NRIC = userID;
     }
 
     public String getPassword() {
@@ -81,17 +92,27 @@ abstract public class AbstractUser implements User{
     public MaritalStatus getMaritalStatus() {
         return maritalStatus;
     }
+    public void setMaritalStatus(MaritalStatus maritalStatus) {
+        this.maritalStatus = maritalStatus;
+    }
 
     public int getAge() {
         return age;
     }
-
-    public String getEligibilityCriteria() {
-        return eligibilityCriteria;
+    public void setAge(int age) {
+        this.age = age;
     }
 
-    public boolean isLoggedIn() {
-        return isLoggedIn;
+    public Boolean isEligible() {
+        return eligibilityCriteria;
+    }
+    public void setEligibilityCriteria(Boolean eligibilityCriteria) {
+        this.eligibilityCriteria = eligibilityCriteria;
+    }
+
+
+    public boolean loggedIn() {
+        return loggedIn;
     }
 }
 
