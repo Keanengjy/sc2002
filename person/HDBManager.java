@@ -63,7 +63,6 @@ public class HDBManager extends AbstractUser {
         if (officer != null) {
             officer.setRegisteredProject(projectName);  // assuming this setter exists
             officer.setRegisteredProjectStatus(ApplicationStatus.Successful);  // if you have a status attribute
-            System.out.println("Officer " + officer.getName() + " approved for project " + projectName.getProjectName());
             pendingApprovals.remove(projectName.getProjectName()); // remove from pending after approval
         } else {
             System.out.println("No pending officer found for project " + projectName);
@@ -72,6 +71,26 @@ public class HDBManager extends AbstractUser {
 
     public void applicationDecision(String projectName, HDBOfficer officer) {
         pendingApprovals.put(projectName, officer);
+    }
+
+    public void approveApplicant(Application app) {
+
+        if (app == null) {
+            System.out.println("No application supplied.");
+            return;
+        }
+        // 1) flip statuses
+        app.setStatus(ApplicationStatus.Successful);
+        app.getApplicant().setApplicationStatus(ApplicationStatus.Successful);
+
+
+        // // 2) remove from pending list (if still there)
+        // Application.applicationRegistry.remove(app);
+
+        System.out.printf("Manager %s approved application of %s for project \"%s\".%n",
+                          name,
+                          app.getApplicant().getName(),
+                          app.getProject().getProjectName());
     }
     
 

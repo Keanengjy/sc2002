@@ -36,11 +36,15 @@ public class Application {
 
     public ApplicationStatus getStatus() {return status;}
     public void setStatus(ApplicationStatus status) {this.status = status;}
+
     public Project getProject() {return project;}
+
+
     public HDBFlat getSelectedFlat() {return selectedFlat;}
+    public void setSelectedFlat(HDBFlat selectedFlat) {this.selectedFlat = selectedFlat;}
+
     public Applicant getApplicant() {return applicant;}
 
-    public void setSelectedFlat(HDBFlat selectedFlat) {this.selectedFlat = selectedFlat;}
 
         
     public static Application findApplicationForApplicant(Applicant appl) {
@@ -74,6 +78,7 @@ public class Application {
     
         /* create & register application */
         Application newApp = new Application(applicant, project);
+
         applicationRegistry.add(newApp);
     
         applicant.setAppliedProject(project.getProjectName());
@@ -83,10 +88,10 @@ public class Application {
                           project.getProjectName(), applicant.getName(), desiredType);
     }
 
-    public static void bookFlat(HDBFlat flat, Applicant applicant, HDBOfficer officer) {
+    public static boolean bookFlat(HDBFlat flat, Applicant applicant, HDBOfficer officer) {
 
         if (applicant.getApplicationStatus() != ApplicationStatus.Successful) {
-            System.out.println("Application not successful yet."); return;
+            System.out.println("Application not successful yet."); return false;
         }
     
         /* locate project */
@@ -96,11 +101,11 @@ public class Application {
                 targetProject = p; break;
             }
         }
-        if (targetProject == null) { System.out.println("Project not found."); return; }
+        if (targetProject == null) { System.out.println("Project not found."); return false; }
     
         /* fetch the Application instance */
         Application appObj = findApplicationForApplicant(applicant);
-        if (appObj == null) { System.out.println("No Application object found."); return; }
+        if (appObj == null) { System.out.println("No Application object found."); return false; }
     
         /* convert flat object to its enum type */
         FlatType type = flat.getFlatType();
@@ -109,10 +114,10 @@ public class Application {
         boolean ok = officer.updateFlatCount(targetProject, type, appObj);
         if (!ok) {
             System.out.println("No more units of that flat type available.");
-            return;
+            return false;
         }
         
-
+        return true;
     }
     
     public void withdrawProject() {
