@@ -61,7 +61,8 @@ public class HDBOfficer extends AbstractUser {
             System.out.println("Application Close: " + registeredProject.getApplicationClosingDate());
             System.out.println("Flats Available: " + registeredProject.getFlats());
             System.out.println("Visibility: " + (registeredProject.isVisible() ? "Visible" : "Not Visible"));
-            System.out.println("Status: " + registeredProjectStatus);  // Assuming this field is set when the officer is approved
+            System.out.println("Status: " + registeredProjectStatus); // Assuming this field is set when the officer is
+                                                                      // approved
         } else {
             System.out.println("No project registered.");
         }
@@ -80,80 +81,146 @@ public class HDBOfficer extends AbstractUser {
         scanner.close();
     }
 
-    public boolean updateFlatCount(Project project, FlatType flatType) {
-        return HDBFlat.decrementFlat(project, flatType); // Update the flat count in the Project class
-    }
+// In HDBOfficer class or wherever applicable
 
-    public String[] getApplication(String nric, Map<String, Applicant> applicants) {
-        // Check if the NRIC exists in the map
-        Applicant a = applicants.get(nric);
-        
-        // If the applicant with the given NRIC is found
-        if (a != null) {
-            String project = a.getAppliedProject();   // "" if never applied
-            HDBFlat flat = a.getSelectedFlat();       // may be null
-    
-            // Return project and flat details
-            return new String[]{
-                    project,
-                    (flat != null) ? flat.toString() : "null"  // flat.toString() or "null" if no flat
-            };
+    public void viewBookingApplication() {
+        // Check if the application registry is empty
+        if (Application.applicationRegistry.isEmpty()) {
+            System.out.println("No applications available.");
+            return;
         }
-        return null;
+
+        // Display the list of applications for the officer to review
+        System.out.println("\n--- Viewing All Applications ---");
+        for (Application app : Application.applicationRegistry) {
+            Applicant applicant = app.getApplicant();
+            Project project = app.getProject();
+            ApplicationStatus status = app.getStatus();
+
+            System.out.printf("Applicant: %-20s | Project: %-25s | Status: %-12s%n",
+                    applicant.getName(), project.getProjectName(), status);
+
+            // Optionally, if you want to show more details of the application
+            if (status == ApplicationStatus.Booked) {
+                HDBFlat selectedFlat = applicant.getSelectedFlat();
+                System.out.println("  - Selected Flat: " + selectedFlat.getFlatType());
+            }
+
+            // If the application status is "Successful", offer the option to book a flat
+            if (status == ApplicationStatus.Successful) {
+                System.out.println("Do you want to book a flat for this applicant? (yes/no): ");
+                String choice = sc.nextLine().trim();
+
+                if ("yes".equalsIgnoreCase(choice)) {
+                    // Try to book the flat for this applicant
+                    boolean success = updateFlatCount(project, applicant.getSelectedFlat().getFlatType(), app);
+
+                    if (success) {
+                        System.out.println("Flat successfully booked for " + applicant.getName() + ".");
+                        applicant.setApplicationStatus(ApplicationStatus.Booked);
+                    } else {
+                        System.out.println("Failed to book flat for " + applicant.getName() + ". No more units available.");
+                    }
+                }
+            }
+        }
     }
 
-    public boolean updateInfo(String nric, Map<String, Applicant> applicants, Project project, FlatType flat) {
-        // Check if the NRIC exists in the map
+    public boolean updateFlatCount(Project project, FlatType flatType, Application app) {
+        return HDBFlat.decrementFlat(project, flatType, project.getAvailableFlats(), app); // Update the flat count in
+                                                                                           // the Project class
+    }
+
+    // public String[] getApplication(String nric, Map<String, Applicant>
+    // applicants) {
+    // // Check if the NRIC exists in the map
+    // Applicant a = applicants.get(nric);
+
+    // // If the applicant with the given NRIC is found
+    // if (a != null) {
+    // String project = a.getAppliedProject(); // "" if never applied
+    // HDBFlat flat = a.getSelectedFlat(); // may be null
+
+    // // Return project and flat details
+    // return new String[]{
+    // project,
+    // (flat != null) ? flat.toString() : "null" // flat.toString() or "null" if no
+    // flat
+    // };
+    // }
+    // return null;
+    // }
+
+    public boolean updateInfo(String nric,
+            Map<String, Applicant> applicants,
+            Project project,
+            FlatType flatType,
+            Application app) {
+
+        // 1 ─ lookup applicant
         Applicant a = applicants.get(nric);
-        if (a == null) {
+        if (a == null || a.getApplicationStatus() != ApplicationStatus.Successful) {
+            return false; // not found / not successful
+        }
+
+        // 2 ─ locate an HDBFlat key of the requested type in this project
+        HDBFlat chosen = null;
+        for (HDBFlat f : project.getAvailableFlats().keySet()) {
+            if (f.getFlatType() == flatType) {
+                chosen = f;
+                break;
+            }
+        }
+        if (chosen == null) { // project doesn't have that type
             return false;
         }
-        if (a.getApplicationStatus() != ApplicationStatus.Successful) {
-            return false;  // only book if they were marked successful
-        }
 
-        a.setApplicationStatus(ApplicationStatus.Booked);
-        HDBFlat chosen = new HDBFlat(flat, 0.0, project.getNeighborhood());
-        a.setSelectedFlat(chosen);
+        // 3 ─ update applicant fields
+        a.setApplicationStatus(ApplicationStatus.Booked); // enum change
+        a.setSelectedFlat(flatType.name()); // store as String "TwoRoom" / "ThreeRoom"
 
-        return true; 
+        // 4 ─ update application object
+        app.setSelectedFlat(chosen);
+        app.setStatus(ApplicationStatus.Booked);
+
+        return true;
     }
 
-public String generateReceipt(Applicant a, Project project) {
+    // public String generateReceipt(Applicant a, Project project) {
 
-    // --- safety checks -------------------------------------------------
-    if (a == null)      throw new IllegalArgumentException("Applicant is null");
-    if (project == null) throw new IllegalArgumentException("Project is null");
-    if (a.getSelectedFlat() == null)
-        throw new IllegalStateException("Applicant has not selected a flat yet");
-    // -------------------------------------------------------------------
+    // // --- safety checks -------------------------------------------------
+    // if (a == null) throw new IllegalArgumentException("Applicant is null");
+    // if (project == null) throw new IllegalArgumentException("Project is null");
+    // if (a.getSelectedFlat() == null)
+    // throw new IllegalStateException("Applicant has not selected a flat yet");
+    // // -------------------------------------------------------------------
 
-    HDBFlat   flat      = a.getSelectedFlat();
-    FlatType  type      = flat.getFlatType();
+    // HDBFlat flat = a.getSelectedFlat();
+    // FlatType type = flat.getFlatType();
 
-    StringBuilder sb = new StringBuilder();
-    sb.append("--------------------------------------------------\n");
-    sb.append("            H D B   B O O K I N G   R E C E I P T\n");
-    sb.append("--------------------------------------------------\n");
-    sb.append(String.format("Applicant Name  : %s%n", a.getName()));
-    sb.append(String.format("NRIC            : %s%n", a.getNRIC()));
-    sb.append(String.format("Age             : %d%n", a.getAge()));
-    sb.append(String.format("Marital Status  : %s%n", a.getMaritalStatus()));
-    sb.append("--------------------------------------------------\n");
-    sb.append(String.format("Project Name    : %s%n", project.getProjectName()));
-    sb.append(String.format("Neighbourhood   : %s%n", project.getNeighborhood()));
-    sb.append(String.format("Project ID      : %s%n", project.getProjectID()));
-    sb.append("--------------------------------------------------\n");
-    sb.append(String.format("Flat Type       : %s%n", type));
-    sb.append(String.format("Selling Price   : $%.2f%n", flat.getSellingPrice()));
-    sb.append(String.format("Location        : %s%n", flat.getLocation()));
-    sb.append(String.format("Booking Status  : %s%n",
-                 a.getApplicationStatus()));           // e.g.  Booked
-    sb.append("--------------------------------------------------\n");
-    sb.append("Thank you for choosing HDB. Please keep this receipt.\n");
+    // StringBuilder sb = new StringBuilder();
+    // sb.append("--------------------------------------------------\n");
+    // sb.append(" H D B B O O K I N G R E C E I P T\n");
+    // sb.append("--------------------------------------------------\n");
+    // sb.append(String.format("Applicant Name : %s%n", a.getName()));
+    // sb.append(String.format("NRIC : %s%n", a.getNRIC()));
+    // sb.append(String.format("Age : %d%n", a.getAge()));
+    // sb.append(String.format("Marital Status : %s%n", a.getMaritalStatus()));
+    // sb.append("--------------------------------------------------\n");
+    // sb.append(String.format("Project Name : %s%n", project.getProjectName()));
+    // sb.append(String.format("Neighbourhood : %s%n", project.getNeighborhood()));
+    // sb.append(String.format("Project ID : %s%n", project.getProjectID()));
+    // sb.append("--------------------------------------------------\n");
+    // sb.append(String.format("Flat Type : %s%n", type));
+    // sb.append(String.format("Selling Price : $%.2f%n", flat.getSellingPrice()));
+    // sb.append(String.format("Location : %s%n", flat.getLocation()));
+    // sb.append(String.format("Booking Status : %s%n",
+    // a.getApplicationStatus())); // e.g. Booked
+    // sb.append("--------------------------------------------------\n");
+    // sb.append("Thank you for choosing HDB. Please keep this receipt.\n");
 
-    return sb.toString();
-}
+    // return sb.toString();
+    // }
 
     public void viewStatus() {
         System.out.println("Status: " + registeredProjectStatus);
@@ -166,12 +233,13 @@ public String generateReceipt(Applicant a, Project project) {
 
     @Override
     public boolean checkEligibility(Project project) {
-        // Example rule: Officers are eligible if they are logged in and have any project assigned
+        // Example rule: Officers are eligible if they are logged in and have any
+        // project assigned
 
         return this.loggedIn && registeredProject != null && registeredProject.isEmpty();
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return registeredProject == null;
     }
 }

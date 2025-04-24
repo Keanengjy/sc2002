@@ -4,7 +4,9 @@ import person.Applicant;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import fileops.ObjectCreate;
@@ -23,6 +25,8 @@ public class Application {
     private HDBFlat selectedFlat;
     private ApplicationStatus status;
 
+    public static final List<Application> applicationRegistry = new ArrayList<>();
+
     public Application(Applicant applicant, Project project) {
         this.applicant = applicant;
         this.project = project;
@@ -30,64 +34,87 @@ public class Application {
         this.status = ApplicationStatus.Pending;
     }
 
-    public void applyProject() {
-        if (!applicant.isLoggedIn()) {
-            System.out.println("Applicant must be logged in to apply for a project.");
-            return;
+    public ApplicationStatus getStatus() {return status;}
+    public void setStatus(ApplicationStatus status) {this.status = status;}
+    public Project getProject() {return project;}
+    public HDBFlat getSelectedFlat() {return selectedFlat;}
+    public Applicant getApplicant() {return applicant;}
+
+    public void setSelectedFlat(HDBFlat selectedFlat) {this.selectedFlat = selectedFlat;}
+
+        
+    public static Application findApplicationForApplicant(Applicant appl) {
+        for (Application a : applicationRegistry) {
+            if (a.getApplicant() == appl) return a;
         }
+        return null;
+
+    }
+
+    public static void applyProject(Project project, Applicant applicant, FlatType desiredType) {
+
+        /* login & duplicate guards (unchanged) */
 
         if (applicant.getAppliedProject() != null) {
             System.out.println("Applicant has already applied to a project.");
             return;
         }
-
-        if (!applicant.checkEligibility(project)) {
-            System.out.println("Applicant is not eligible for this project.");
+    
+        /* new eligibility check */
+        if (!applicant.meetsEligibility(desiredType)) {
+            System.out.println("Applicant does not meet age/marital rules for this flat type.");
             return;
         }
-
+    
+        /* also ensure the project actually offers that type */
+        if (!project.getAvailableFlatsByType().containsKey(desiredType)) {
+            System.out.println("Project does not offer the requested flat type.");
+            return;
+        }
+    
+        /* create & register application */
+        Application newApp = new Application(applicant, project);
+        applicationRegistry.add(newApp);
+    
         applicant.setAppliedProject(project.getProjectName());
         applicant.setApplicationStatus(ApplicationStatus.Pending);
-        System.out.println("Project applied successfully.");
-        
+    
+        System.out.printf("Project \"%s\" applied successfully for %s (%s).%n",
+                          project.getProjectName(), applicant.getName(), desiredType);
     }
 
-    public void bookFlat(HDBFlat flat, Applicant applicant, HDBOfficer officer) {
-        if (!applicant.loggedIn) {
-            System.out.println("Please log in to book a flat.");
-            return;
-        }
-        if (applicant.getApplicationStatus() == null || applicant.getApplicationStatus() != ApplicationStatus.Successful) {
-            System.out.println("You cannot book a flat until your application is successful.");
-            return;
-        }
+    public static void bookFlat(HDBFlat flat, Applicant applicant, HDBOfficer officer) {
 
+        if (applicant.getApplicationStatus() != ApplicationStatus.Successful) {
+            System.out.println("Application not successful yet."); return;
+        }
+    
+        /* locate project */
         Project targetProject = null;
-        for (Project p : ObjectCreate.projectList) {          // or your project registry
+        for (Project p : ObjectCreate.projectList) {
             if (applicant.getAppliedProject().equalsIgnoreCase(p.getProjectName())) {
-                targetProject = p;
-                break;
+                targetProject = p; break;
             }
         }
-
-        if (targetProject == null) {
-            System.out.println("Project \"" + applicant.getAppliedProject() + "\" not found.");
-            return;
-        }
-
-        FlatType type = FlatType.valueOf(selectedFlat.toString());
-        boolean ok = officer.updateFlatCount(targetProject,type);
-
+        if (targetProject == null) { System.out.println("Project not found."); return; }
+    
+        /* fetch the Application instance */
+        Application appObj = findApplicationForApplicant(applicant);
+        if (appObj == null) { System.out.println("No Application object found."); return; }
+    
+        /* convert flat object to its enum type */
+        FlatType type = flat.getFlatType();
+    
+        /* ask officer to update stock, passing Application as well */
+        boolean ok = officer.updateFlatCount(targetProject, type, appObj);
         if (!ok) {
-            System.out.println("Sorry, no more units of that flat type are available.");
+            System.out.println("No more units of that flat type available.");
             return;
         }
-        applicant.setApplicationStatus(ApplicationStatus.Booked);   // or "Booked" string
-        System.out.println("Flat booking successful!");
-            
         
-        
+
     }
+    
 
     public void withdrawProject() {
         if (!applicant.isLoggedIn()) {
@@ -108,10 +135,5 @@ public class Application {
         System.out.println("Application withdrawn successfully.");
     }
 
-    public ApplicationStatus getStatus() {return status;}
-    public void setStatus(ApplicationStatus status) {this.status = status;}
-    public Project getProject() {return project;}
-    public HDBFlat getSelectedFlat() {return selectedFlat;}
-    public Applicant getApplicant() {return applicant;}
 
 }

@@ -6,7 +6,7 @@ import java.util.Objects;
 import person.HDBManager;
 import person.HDBOfficer;
 import person.Applicant;
-
+import person.Application;
 import person.MaritalStatus;
 import project.UserRole;
 import project.FlatType;
@@ -60,17 +60,39 @@ public class HDBFlat {
         this.isBooked = booked;
     }
     
-    public static boolean decrementFlat(Project project, FlatType flatType) {
-        // Implement logic to decrement the flat count for the given project and flat type
-        // Example logic (you may need to adjust based on your actual Project and FlatType structure):
-        if (project.getFlats().containsKey(flatType) && project.getFlats().get(flatType) > 0) {
-            project.getFlats().put(flatType, project.getFlats().get(flatType) - 1);
-            return true;
+    public static boolean decrementFlat(Project project, FlatType flatType, Map<HDBFlat, Integer>availableFlats, Application app) {
+        /* 1 ─ locate a matching HDBFlat key ---------------------------- */
+        HDBFlat match = null;
+        for (HDBFlat f : availableFlats.keySet()) {
+            if (f.getFlatType() == flatType) {
+                match = f;
+                break;
+            }
         }
-        return false;
-    }
+        if (match == null) {
+            return false;
+        }
 
-    public void resetBooking() {
-        isBooked = false;
-    }
+        /* 2 ─ check remaining quantity -------------------------------- */
+        int remaining = availableFlats.get(match);
+        if (remaining <= 0) {
+            return false;                              // none left
+        }
+
+        /* 3 ─ decrement and update map -------------------------------- */
+        if (remaining == 1) {
+            availableFlats.remove(match);              // last unit → remove entry
+        } else {
+            availableFlats.put(match, remaining - 1);  // otherwise minus‑1
+        }
+
+        /* 4 ─ attach flat to the application -------------------------- */
+        app.setSelectedFlat(match);
+
+        return true;                                   // booking succeeded
+            }
+
+            public void resetBooking() {
+                isBooked = false;
+            }
 }

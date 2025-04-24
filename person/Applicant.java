@@ -17,12 +17,13 @@ import project.FlatType;
 import project.HDBFlat;
 import project.Project;
 import person.HDBOfficer;
+import person.Application;
 
 public class Applicant extends AbstractUser {
     private Enquiry enquiry;
     private String appliedProject;
     private ApplicationStatus applicationStatus;
-    private HDBFlat selectedFlat;
+    private String selectedFlat;
 
     public Applicant(String name, String NRIC, int age, String maritalStatus, 
                     String password, boolean eligibilityCriteria, boolean loggedIn) {
@@ -36,7 +37,6 @@ public class Applicant extends AbstractUser {
         // Assuming `password` is a protected or private field in AbstractUser or User.
         this.password = newPassword;
     }
-
 
 
     public UserRole getRole() {
@@ -331,4 +331,14 @@ public boolean deleteEnquiry(int enquiryID) {
         System.out.println("Removing enquiry with ID: " + enquiryID);
         return true;
     }
+
+    public boolean meetsEligibility(FlatType type) {
+        if (maritalStatus.equalsIgnoreCase("Single")) {
+            return age >= 35 && type == FlatType.TwoRoom;
+        } else if (maritalStatus.equalsIgnoreCase("Married")) {
+            return age >= 21;                    // any type allowed
+        }
+        return false;                            // other cases not allowed
+    }
+
 }
