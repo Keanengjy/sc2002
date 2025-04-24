@@ -55,15 +55,29 @@ public class Applicant extends AbstractUser {
     public void setSelectedFlat(String selectedFlat) {this.selectedFlat = selectedFlat;}  // updated to accept String
 
     public void viewProject() {
-        if (!loggedIn) {
-            System.out.println("Please log in to view projects.");
+
+        // 1. check if the applicant ever applied
+        if (appliedProject == null) {
+            System.out.println("You have not applied for any BTO project yet.");
             return;
         }
-        
-        System.out.println("Viewing available projects...");
-        // display available projects 
+    
+        // 2. show core application info
+        System.out.println("\n--- Your Application Details ---");
+        System.out.println("Project Name   : " + appliedProject);
+        System.out.println("Status         : " + applicationStatus);
+    
+        // 3. if an Application object is linked, show more
+        if (applicationStatus != null) {
+            Application application = Application.findApplicationForApplicant(this);
+            Project p = application.getProject();
+            System.out.println("Neighbourhood  : " + p.getNeighborhood());
+            if (applicationStatus == ApplicationStatus.Booked) {
+                HDBFlat flat = application.getSelectedFlat();
+                System.out.println("Flat Type      : " + flat.getFlatType());
+            }
+        }
     }
-
     
     public String editEnquiry() {
         if (!loggedIn) {

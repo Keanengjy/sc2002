@@ -28,21 +28,10 @@ public class HDBOfficer extends AbstractUser {
         this.registeredProjectStatus = ApplicationStatus.Pending;
     }
 
-    public void setRegisteredProjectStatus(ApplicationStatus status) {
-        this.registeredProjectStatus = status;
-    }
-
-    public ApplicationStatus getRegisteredProjectStatus() {
-        return this.registeredProjectStatus;
-    }
-
-    public void setRegisteredProject(Project project) {
-        this.registeredProject = project;
-    }
-
-    public Project getRegisteredProject() {
-        return registeredProject;
-    }
+    public void setRegisteredProjectStatus(ApplicationStatus status) {this.registeredProjectStatus = status;}
+    public ApplicationStatus getRegisteredProjectStatus() {return this.registeredProjectStatus;}
+    public void setRegisteredProject(Project project) {this.registeredProject = project;}
+    public Project getRegisteredProject() {return registeredProject;}
 
     public void registerProject(Project p) {
 
@@ -131,25 +120,24 @@ public class HDBOfficer extends AbstractUser {
                                                                                            // the Project class
     }
 
-    // public String[] getApplication(String nric, Map<String, Applicant>
-    // applicants) {
-    // // Check if the NRIC exists in the map
-    // Applicant a = applicants.get(nric);
+    public String[] getApplication(String nric, Map<String, Applicant>
+    applicants, Application app) {
+    // Check if the NRIC exists in the map
+    Applicant a = applicants.get(nric);
 
-    // // If the applicant with the given NRIC is found
-    // if (a != null) {
-    // String project = a.getAppliedProject(); // "" if never applied
-    // HDBFlat flat = a.getSelectedFlat(); // may be null
+    // If the applicant with the given NRIC is found
+    if (a != null) {
+    String project = a.getAppliedProject(); // "" if never applied
+    HDBFlat flat = app.getSelectedFlat(); // may be null
 
-    // // Return project and flat details
-    // return new String[]{
-    // project,
-    // (flat != null) ? flat.toString() : "null" // flat.toString() or "null" if no
-    // flat
-    // };
-    // }
-    // return null;
-    // }
+    // Return project and flat details
+    return new String[]{
+    project,
+    (flat != null) ? flat.toString() : "null" // flat.toString() or "null" if no
+    };
+    }
+    return null;
+    }
 
     public boolean updateInfo(String nric,
             Map<String, Applicant> applicants,
@@ -186,41 +174,41 @@ public class HDBOfficer extends AbstractUser {
         return true;
     }
 
-    // public String generateReceipt(Applicant a, Project project) {
+    public String generateReceipt(Applicant a, Project project, Application app) {
 
-    // // --- safety checks -------------------------------------------------
-    // if (a == null) throw new IllegalArgumentException("Applicant is null");
-    // if (project == null) throw new IllegalArgumentException("Project is null");
-    // if (a.getSelectedFlat() == null)
-    // throw new IllegalStateException("Applicant has not selected a flat yet");
-    // // -------------------------------------------------------------------
+    // --- safety checks -------------------------------------------------
+    if (a == null) throw new IllegalArgumentException("Applicant is null");
+    if (project == null) throw new IllegalArgumentException("Project is null");
+    if (a.getSelectedFlat() == null)
+    throw new IllegalStateException("Applicant has not selected a flat yet");
+    // -------------------------------------------------------------------
 
-    // HDBFlat flat = a.getSelectedFlat();
-    // FlatType type = flat.getFlatType();
+    HDBFlat flat = app.getSelectedFlat();
+    FlatType type = flat.getFlatType();
 
-    // StringBuilder sb = new StringBuilder();
-    // sb.append("--------------------------------------------------\n");
-    // sb.append(" H D B B O O K I N G R E C E I P T\n");
-    // sb.append("--------------------------------------------------\n");
-    // sb.append(String.format("Applicant Name : %s%n", a.getName()));
-    // sb.append(String.format("NRIC : %s%n", a.getNRIC()));
-    // sb.append(String.format("Age : %d%n", a.getAge()));
-    // sb.append(String.format("Marital Status : %s%n", a.getMaritalStatus()));
-    // sb.append("--------------------------------------------------\n");
-    // sb.append(String.format("Project Name : %s%n", project.getProjectName()));
-    // sb.append(String.format("Neighbourhood : %s%n", project.getNeighborhood()));
-    // sb.append(String.format("Project ID : %s%n", project.getProjectID()));
-    // sb.append("--------------------------------------------------\n");
-    // sb.append(String.format("Flat Type : %s%n", type));
-    // sb.append(String.format("Selling Price : $%.2f%n", flat.getSellingPrice()));
-    // sb.append(String.format("Location : %s%n", flat.getLocation()));
-    // sb.append(String.format("Booking Status : %s%n",
-    // a.getApplicationStatus())); // e.g. Booked
-    // sb.append("--------------------------------------------------\n");
-    // sb.append("Thank you for choosing HDB. Please keep this receipt.\n");
+    StringBuilder sb = new StringBuilder();
+    sb.append("--------------------------------------------------\n");
+    sb.append(" H D B B O O K I N G R E C E I P T\n");
+    sb.append("--------------------------------------------------\n");
+    sb.append(String.format("Applicant Name : %s%n", a.getName()));
+    sb.append(String.format("NRIC : %s%n", a.getNRIC()));
+    sb.append(String.format("Age : %d%n", a.getAge()));
+    sb.append(String.format("Marital Status : %s%n", a.getMaritalStatus()));
+    sb.append("--------------------------------------------------\n");
+    sb.append(String.format("Project Name : %s%n", project.getProjectName()));
+    sb.append(String.format("Neighbourhood : %s%n", project.getNeighborhood()));
+    sb.append(String.format("Project ID : %s%n", project.getProjectID()));
+    sb.append("--------------------------------------------------\n");
+    sb.append(String.format("Flat Type : %s%n", type));
+    sb.append(String.format("Selling Price : $%.2f%n", flat.getSellingPrice()));
+    sb.append(String.format("Location : %s%n", flat.getLocation()));
+    sb.append(String.format("Booking Status : %s%n",
+    a.getApplicationStatus())); // e.g. Booked
+    sb.append("--------------------------------------------------\n");
+    sb.append("Thank you for choosing HDB. Please keep this receipt.\n");
 
-    // return sb.toString();
-    // }
+    return sb.toString();
+    }
 
     public void viewStatus() {
         System.out.println("Status: " + registeredProjectStatus);
@@ -231,15 +219,14 @@ public class HDBOfficer extends AbstractUser {
         return UserRole.HDBOfficer;
     }
 
-    @Override
-    public boolean checkEligibility(Project project) {
-        // Example rule: Officers are eligible if they are logged in and have any
-        // project assigned
-
-        return this.loggedIn && registeredProject != null && registeredProject.isEmpty();
-    }
-
     public boolean isEmpty() {
         return registeredProject == null;
     }
+
+    @Override
+    public boolean checkEligibility(Project project) {
+
+        return this.loggedIn && registeredProject != null && isEmpty();
+    }
+
 }

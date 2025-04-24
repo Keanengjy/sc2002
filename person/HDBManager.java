@@ -24,8 +24,6 @@ public class HDBManager extends AbstractUser {
     }
 
     public void createProject(Project project) {
-        //call construcotr
-        //Project project = new Project();
         project.setManager(this);
         project.setVisibility(false);
         managedProjects.add(project);

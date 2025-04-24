@@ -115,12 +115,8 @@ public class Application {
 
     }
     
-
     public void withdrawProject() {
-        if (!applicant.isLoggedIn()) {
-            System.out.println("Applicant must be logged in to withdraw.");
-            return;
-        }
+
 
         if (applicant.getAppliedProject() == null) {
             System.out.println("No project application to withdraw.");
