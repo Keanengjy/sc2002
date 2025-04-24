@@ -3,7 +3,7 @@ package project;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Enquiry {
+public class Enquiry implements EnquiryHandler {
     private Map<String, String> message;
     private int enquiryID;
     private int senderID;
@@ -96,5 +96,26 @@ public class Enquiry {
         Map<String, String> messageMap = new HashMap<>();
         messageMap.put("content", enquiry);
         this.message = messageMap;
+    }
+
+    //from interface enquiryhandler
+
+    public void handleEnquiry(int enquiryID) {
+        System.out.println("Processing enquiry with ID: " + enquiryID);
+        
+        if (this.enquiryID == enquiryID) {
+            System.out.println("Handling enquiry from sender ID: " + senderID);
+            for (Map.Entry<String, String> entry : message.entrySet()) {
+                System.out.println("Message content: " + entry.getValue());
+            }
+        } else {
+            System.out.println("Enquiry not found with ID: " + enquiryID);
+        }
+    }
+
+    public void replyEnquiry(String response) {
+        // This method sets the response to an enquiry
+        this.response = response;
+        System.out.println("Reply: " + response);
     }
 }
