@@ -638,33 +638,4 @@ public class Main {
         };
     }
 
-    // Test Enquiry reply
-
-    // Map<String,String> msg = new HashMap<>();
-    // msg.put("Applicant123", "When is key collection?");
-    // Enquiry enquiry = new Enquiry(msg, 1, 123, null, 0);
-
-    // // officer.replyEnquiry(enquiry);
-
-    // // // 3. print stored reply to verify
-    // // System.out.println("\n=== Stored in Enquiry object ===");
-    // // System.out.println("Responder ID : " + enquiry.getResponderID());
-    // // System.out.println("Reply : " + enquiry.getResponse());
-
-    // Initialize applicantMap
-
-    // String[] result = officer.getApplication("S1234567A",
-    // ObjectCreate.applicantMap);
-
-    // if (result != null) {
-    // System.out.println("Applied project: " + result[0]);
-    // System.out.println("Selected flat : " + result[1]);
-    // } else {
-    // System.out.println("NRIC not found.");
-    // }
-
-    // Write to file example
-    // data.add(List.of("John Doe", "12345678A"));
-    // FileOps.writeFile("ApplicantList", data);
-
 }
