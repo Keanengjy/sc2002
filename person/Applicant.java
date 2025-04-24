@@ -22,6 +22,13 @@ public class Applicant extends AbstractUser {
         this.applicationStatus = null;
         this.selectedFlat = null;
     }
+    @Override
+    public void changePassword(String newPassword) {
+        // Assuming `password` is a protected or private field in AbstractUser or User.
+        this.password = newPassword;
+    }
+
+
 
     public UserRole getRole() {
         return UserRole.Applicant;
@@ -123,7 +130,7 @@ public class Applicant extends AbstractUser {
         }
         
         // Check if the enquiry belongs to this applicant
-        if (!enquiryToEdit.getSenderID().equals(getNRIC())) {
+        if (enquiryToEdit.getSenderID() != Integer.parseInt(getNRIC())) {
             return "You can only edit your own enquiries";
         }
         
@@ -190,7 +197,7 @@ public class Applicant extends AbstractUser {
         messageMap.put("body", "I would like more information about the application process.");
         
         // Create a new enquiry
-        Enquiry newEnquiry = new Enquiry();
+        Enquiry newEnquiry = new Enquiry("Requesting for flat availability", 1001, 1002);
         newEnquiry.setMessage(messageMap);
         newEnquiry.setEnquiryID(generateNewEnquiryID()); // Generate a unique ID
         newEnquiry.setSenderID(Integer.parseInt(getNRIC())); // Set sender ID to applicant's ID
@@ -294,7 +301,7 @@ public boolean deleteEnquiry(int enquiryID) {
     private Enquiry getCurrentEnquiry() {
         // This would retrieve the currently selected enquiry from the application state
         // For now, we return a mock enquiry
-        Enquiry mockEnquiry = new Enquiry();
+        Enquiry mockEnquiry = new Enquiry("Requesting for flat availability", 1003, 100);
         Map<String, String> message = new HashMap<>();
         message.put("subject", "Query about project");
         message.put("body", "When does the application period open?");
@@ -347,7 +354,7 @@ public boolean deleteEnquiry(int enquiryID) {
         // This would search for the enquiry in persistent storage
         // For now, we return a mock enquiry if the ID matches our test case
         if (enquiryID == 12345) {
-            Enquiry mockEnquiry = new Enquiry();
+            Enquiry mockEnquiry = new Enquiry("Requesting for flat availability", 1001, 1002);
             Map<String, String> message = new HashMap<>();
             message.put("subject", "Query about project");
             message.put("body", "When does the application period open?");

@@ -6,11 +6,11 @@ import java.util.Map;
 public class Enquiry {
     private Map<String, String> message;
     private int enquiryID;
-    private String senderID;
+    private int senderID;
     private String response;
     private int responderID;
     
-    public Enquiry(String message, int enquiryID, String senderID) {
+    public Enquiry(String message, int enquiryID, int senderID) {
         this.message = new HashMap<>();
         this.enquiryID = enquiryID;
         this.senderID = senderID;
@@ -33,9 +33,14 @@ public class Enquiry {
         this.enquiryID = enquiryID;
     }
 
-    public String getSenderID() {
+    public int getSenderID() {
         return senderID;
     }
+    public void setSenderID(int senderID) {
+        this.senderID = senderID;
+    }
+    
+
 
     public String getResponse() {
         return response;
