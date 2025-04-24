@@ -95,8 +95,6 @@ public class Project {
         return byType;
     }
 
-
-
     // public void addProject(String project) { allProject.add(project); }
     // public void setProjectName(String name) { this.projectName = name; }
     // public void filterProjectDetails(String criteria) {}
