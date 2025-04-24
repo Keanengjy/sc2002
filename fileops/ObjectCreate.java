@@ -28,7 +28,8 @@ public class ObjectCreate {
                 Applicant app = new Applicant(
                         rec.get(0).trim(), rec.get(1).trim(),
                         Integer.parseInt(rec.get(2).trim()),
-                        rec.get(3).trim(), rec.get(4).trim());
+                        rec.get(3).trim(), rec.get(4).trim(),
+                        false, false);
                 applicantMap.put(app.getNRIC(), app);
 
             }
