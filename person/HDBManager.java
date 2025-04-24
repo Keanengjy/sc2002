@@ -5,7 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+<<<<<<< HEAD
 import project.ApplicationStatus;
+=======
+
+>>>>>>> d4a37763a682a225f6ab7e66cbb39fc6cf5ff63e
 import project.Project;
 import project.UserRole;
 import project.Visibility;
@@ -26,12 +30,31 @@ public class HDBManager extends AbstractUser {
         //this.setRole(UserRole.HDBManager);
     }
 
+<<<<<<< HEAD
     public void createProject() {
         // Create a new project and add it to managed projects
         Project project = new Project();
         project.setManager(this.getNRIC());
         project.setVisibility(Visibility.off);
         managedProjects.add(project);
+=======
+    public void createProject() {}
+    public void deleteProject(String name) {}
+    public void toggleProjectVisibility(boolean visibility) {}
+    public void toggleApplication(String decision) {}
+    public void replyEnquiry(String reply) {}
+
+    public void approveOfficer(Project projectName) {
+        HDBOfficer officer = pendingApprovals.get(projectName.getProjectName());
+        if (officer != null) {
+            officer.setRegisteredProject(projectName);  // assuming this setter exists
+            officer.setRegisteredProjectStatus(ApplicationStatus.Approved);  // if you have a status attribute
+            System.out.println("Officer " + officer.getName() + " approved for project " + projectName.getProjectName());
+            pendingApprovals.remove(projectName.getProjectName()); // remove from pending after approval
+        } else {
+            System.out.println("No pending officer found for project " + projectName);
+        }
+>>>>>>> d4a37763a682a225f6ab7e66cbb39fc6cf5ff63e
     }
 
     public void editProject(String projectName, String string) {

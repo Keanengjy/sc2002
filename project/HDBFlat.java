@@ -1,47 +1,76 @@
 package project;
 
-enum FlatType {
-    TwoRoom,
-    ThreeRoom
-}
+import java.util.Map;
+import java.util.Objects;
 
+import person.HDBManager;
+import person.HDBOfficer;
+import person.Applicant;
+
+import person.MaritalStatus;
+import project.UserRole;
+import project.FlatType;
+import project.ApplicationStatus;
 
 public class HDBFlat {
     private FlatType flatType;
-    private int unitNo;
-    private String description;
     private double sellingPrice;
     private String location;
     private boolean isBooked;
 
-
-    public HDBFlat(FlatType flatType, int unitNo, String description, double sellingPrice, String location) {
+    public HDBFlat(FlatType flatType, double sellingPrice, String location) {
         this.flatType = flatType;
-        this.unitNo = unitNo;
-        this.description = description;
         this.sellingPrice = sellingPrice;
         this.location = location;
         this.isBooked = false; // Default to not booked
     }
 
-    public FlatType getFlatType() { return flatType; }
-    public int getUnitNo() { return unitNo; }
-    public String getDescription() { return description; }
-    public double getSellingPrice() { return sellingPrice; }
-    public String getLocation() { return location; }
-    public boolean isBooked() { return isBooked; }
+    public FlatType getFlatType() {
+        return flatType;
+    }
 
+    public double getSellingPrice() {
+        return sellingPrice;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public boolean isBooked() {
+        return isBooked;
+    }
 
     public void setFlatType(String type) {
-        if (type.equals("TwoRoom")) this.flatType = FlatType.TwoRoom;
-        else if (type.equals("ThreeRoom")) this.flatType = FlatType.ThreeRoom;
+        if (type.equals("TwoRoom"))
+            this.flatType = FlatType.TwoRoom;
+        else if (type.equals("ThreeRoom"))
+            this.flatType = FlatType.ThreeRoom;
     }
-    public void setUnitNo(int unitNo) { this.unitNo = unitNo; }
-    public void setDescription(String description) { this.description = description; }
-    public void setSellingPrice(double price) { this.sellingPrice = price; }
-    public void setLocation(String location) { this.location = location; }
-    public void setBooked(boolean booked) { this.isBooked = booked; }
 
+    public void setSellingPrice(double price) {
+        this.sellingPrice = price;
+    }
 
-    public void decrementUnits() {}
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public void setBooked(boolean booked) {
+        this.isBooked = booked;
+    }
+    
+    public static boolean decrementFlat(Project project, FlatType flatType) {
+        // Implement logic to decrement the flat count for the given project and flat type
+        // Example logic (you may need to adjust based on your actual Project and FlatType structure):
+        if (project.getFlats().containsKey(flatType) && project.getFlats().get(flatType) > 0) {
+            project.getFlats().put(flatType, project.getFlats().get(flatType) - 1);
+            return true;
+        }
+        return false;
+    }
+
+    public void resetBooking() {
+        isBooked = false;
+    }
 }
