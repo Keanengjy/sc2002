@@ -59,8 +59,7 @@ public class Enquiry {
     }
 
     public int getEnquiryID() {
-        return enquiryID;
-    }
+        return enquiryID;}
 
     public void setSenderID(int senderID) {
         this.senderID = senderID;
