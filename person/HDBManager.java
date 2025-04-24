@@ -1,61 +1,88 @@
 package person;
 
-import project.ApplicationStatus;
-import project.FlatType;
-import project.Visibility;
-import person.MaritalStatus;
-import project.UserRole;
-import java.util.List;
-import java.util.Map;
 import java.util.ArrayList;
-import java.util.HashMap;
-
-
+import java.util.List;
+import project.ApplicationStatus;
+import project.Enquiry;
 import project.Project;
+import project.UserRole;
+import project.Visibility;
 
 
 public class HDBManager extends AbstractUser {
-    private List<HDBOfficer> HDBOfficersUnder;
-    private String managedProjects;
-    private Map<String, HDBOfficer> pendingApprovals;
+    private String HDBOfficersUnder;
+    private List<Project> managedProjects;
+    private List<String> pendingApprovals;
+    private List<String> pendingApprovalOfficers;
 
     public HDBManager(String name, String NRIC, int age, String maritalStatus, String password) {
         super(name, NRIC, age, maritalStatus, password);
-        this.pendingApprovals = new HashMap<>();
-        this.HDBOfficersUnder = new ArrayList<>();
-        this.managedProjects = "";
+        this.pendingApprovals = new ArrayList<>();
+        this.pendingApprovalOfficers = new ArrayList<>();
+        this.managedProjects = new ArrayList<>();
+        this.HDBOfficersUnder = "";
     }
 
-    public void createProject() {}
-    public void deleteProject(String name) {}
-    public void toggleProjectVisibility(boolean visibility) {}
-    public void toggleApplication(String decision) {}
-    public void replyEnquiry(String reply) {}
+    public void createProject(Project project) {
+        //call construcotr
+        //Project project = new Project();
+        project.setManager(this);
+        project.setVisibility(false);
+        managedProjects.add(project);
+    }
 
-    public void approveOfficer(Project projectName) {
-        HDBOfficer officer = pendingApprovals.get(projectName.getProjectName());
-        if (officer != null) {
-            officer.setRegisteredProject(projectName);  // assuming this setter exists
-            officer.setRegisteredProjectStatus(ApplicationStatus.Approved);  // if you have a status attribute
-            System.out.println("Officer " + officer.getName() + " approved for project " + projectName.getProjectName());
-            pendingApprovals.remove(projectName.getProjectName()); // remove from pending after approval
-        } else {
-            System.out.println("No pending officer found for project " + projectName);
+    public void editProject(String projectName, String newName) {
+        for (Project project : managedProjects) {
+            if (project.getProjectName().equals(projectName)) {
+                project.setProjectName(newName);
+                break;
+            }
         }
     }
 
-    public void applicationDecision(String projectName, HDBOfficer officer) {
-        pendingApprovals.put(projectName, officer);
+    public void deleteProject(String projectName) {
+        //remove obj
+        managedProjects.removeIf(project -> project.getProjectName().equals(projectName));
+    }
+
+    public void toggleProjectVisibility(Visibility visibility, boolean isVisible) {
+        for (Project project : managedProjects) {
+            project.setVisibility(isVisible);
+        }
     }
     
-    public void processPendingApprovals() {
-        for (Map.Entry<String, HDBOfficer> entry : pendingApprovals.entrySet()) {
-            String project = entry.getKey();
-            HDBOfficer officer = entry.getValue();
+    
+    public void replyEnquiry(Enquiry enquiry, String reply) {
+        //do smth
+        enquiry.setResponse(reply);
+        enquiry.setResponderID(Integer.parseInt(this.getNRIC()));
+    }
 
-            System.out.println("Pending approval for project: " + project + " - Officer: " + officer.getName());
+    public void approveOfficer(HDBOfficer officer, Project project) {
+        if (officer != null && project != null) {
+            // Approve the officer for the project
+            project.addOfficer(officer);
+            // Update available slots
+            // Here we would update the available slots count
+            System.out.println("Officer " + officer.getName() + " approved for project " + project.getProjectName());
+            // Remove from pending approvals
+            pendingApprovalOfficers.remove(officer.getNRIC());
         }
     }
+
+    public void applicationDecision(String decision, int applicationId) {
+        //pendingApprovals.put(projectName, officer);
+        ApplicationStatus status;
+        if (decision.equalsIgnoreCase("Approved")) {
+            status = ApplicationStatus.Successful;
+        } else {
+            status = ApplicationStatus.Unsuccessful;
+        }
+        System.out.println("Application " + applicationId + " status updated to " + status);
+        // Remove from pending approvals
+        pendingApprovals.remove(applicationId);
+    }
+    
 
     @Override
     public UserRole getRole() {
@@ -66,5 +93,36 @@ public class HDBManager extends AbstractUser {
     public boolean checkEligibility(Project project) {
         // Managers always have access, or could be based on a rule
         return true;
+    }
+
+    public String getHDBOfficersUnder() {
+        return this.HDBOfficersUnder;
+    }
+
+    public void setHDBOfficersUnder(String officers) {
+        this.HDBOfficersUnder = officers;
+    }
+
+    
+    public List<Project> getManagedProjects() {
+        return this.managedProjects;
+    }
+
+    public void setManagedProjects(List<Project> projects) {
+        this.managedProjects = projects;
+    }
+
+    public List<String> getPendingApprovals() {
+        return this.pendingApprovals;
+    }
+    public void setPendingApprovals(List<String> approvals) {
+        this.pendingApprovals = approvals;
+    }
+
+    public List<String> getPendingApprovalOfficers() {
+        return this.pendingApprovalOfficers;
+    }
+    public void setPendingApprovalOfficers(List<String> officers) {
+        this.pendingApprovalOfficers = officers;
     }
 }

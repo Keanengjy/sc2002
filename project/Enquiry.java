@@ -1,13 +1,5 @@
 package project;
 
-import project.FlatType;
-import project.Visibility;
-import person.MaritalStatus;
-import project.ApplicationStatus;
-
-import person.HDBManager;
-import person.HDBOfficer;
-import person.Applicant;
 import java.util.HashMap;
 import java.util.Map;
 
