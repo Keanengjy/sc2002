@@ -9,6 +9,7 @@ import person.MaritalStatus;
 
 import fileops.FileOps;
 import fileops.ObjectCreate;
+import person.Applicant;
 import person.HDBManager;
 import person.HDBOfficer;
 import project.Project;
@@ -61,39 +62,40 @@ public class Main {
             // msg.put("Applicant123", "When is key collection?");
             // Enquiry enquiry = new Enquiry(msg, 1, 123, null, 0);
 
-            // // 2. create officer and let them reply
+            // // // 2. create officer and let them reply
             HDBOfficer officer = ObjectCreate.officerMap.get("Daniel");
+            Applicant appl = ObjectCreate.applicantMap.get("S1234567A");
 
-            // officer.replyEnquiry(enquiry);
+            // // officer.replyEnquiry(enquiry);
 
-            // // 3. print stored reply to verify
-            // System.out.println("\n=== Stored in Enquiry object ===");
-            // System.out.println("Responder ID : " + enquiry.getResponderID());
-            // System.out.println("Reply        : " + enquiry.getResponse());
+            // // // 3. print stored reply to verify
+            // // System.out.println("\n=== Stored in Enquiry object ===");
+            // // System.out.println("Responder ID : " + enquiry.getResponderID());
+            // // System.out.println("Reply        : " + enquiry.getResponse());
             
-            //Book flats
+            // //Book flats
 
-            // 1) Print initial stock
-            System.out.println("Initial stock: " + p.getFlats());
+            // // 1) Print initial stock
+            // System.out.println("Initial stock: " + p.getFlats());
 
-            // 2) Extract HDBFlat keys by type
+            // // 2) Extract HDBFlat keys by type
 
-            // 3) Book three 2-room units
-            for (int i = 1; i <= 3; i++) {
-                boolean ok = officer.updateFlatCount(p, FlatType.TwoRoom);
-                System.out.printf("  Attempt %d to book 2-room: %s%n",
-                                i, ok ? "SUCCESS" : "FAILED");
-            }
+            // // 3) Book three 2-room units
+            // for (int i = 1; i <= 3; i++) {
+            //     boolean ok = officer.updateFlatCount(p, FlatType.TwoRoom);
+            //     System.out.printf("  Attempt %d to book 2-room: %s%n",
+            //                     i, ok ? "SUCCESS" : "FAILED");
+            // }
 
-            // 4) Book three 3-room units
-            for (int i = 1; i <= 3; i++) {
-                boolean ok = officer.updateFlatCount(p, FlatType.ThreeRoom);
-                System.out.printf("  Attempt %d to book 3-room: %s%n",
-                                i, ok ? "SUCCESS" : "FAILED");
-            }
+            // // 4) Book three 3-room units
+            // for (int i = 1; i <= 3; i++) {
+            //     boolean ok = officer.updateFlatCount(p, FlatType.ThreeRoom);
+            //     System.out.printf("  Attempt %d to book 3-room: %s%n",
+            //                     i, ok ? "SUCCESS" : "FAILED");
+            // }
 
-            // 5) Print final stock
-            System.out.println("\nFinal stock: " + p.getFlats());
+            // // 5) Print final stock
+            // System.out.println("\nFinal stock: " + p.getFlats());
             
 
 
@@ -111,6 +113,16 @@ public class Main {
             // Write to file example
             // data.add(List.of("John Doe", "12345678A"));
             // FileOps.writeFile("ApplicantList", data);
+
+            appl.login("S1234567A","password");                               // pretend login
+            appl.setApplicationStatus(ApplicationStatus.Successful);
+            appl.setAppliedProject(p.getProjectName());
+            appl.setSelectedFlat("TwoRoom");                   // string form
+
+            /* 5. Call bookFlat and observe stock drop */
+            System.out.println("Initial stock: " + p.getAvailableFlatsByType());
+            appl.bookFlat(officer);                            // invoke method
+            System.out.println("Final   stock: " + p.getAvailableFlatsByType());  // updated to match method call
 
             }catch(Exception e)
         {

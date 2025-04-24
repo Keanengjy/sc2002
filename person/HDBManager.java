@@ -36,7 +36,7 @@ public class HDBManager extends AbstractUser {
         HDBOfficer officer = pendingApprovals.get(projectName.getProjectName());
         if (officer != null) {
             officer.setRegisteredProject(projectName);  // assuming this setter exists
-            officer.setRegisteredProjectStatus(ApplicationStatus.Approved);  // if you have a status attribute
+            officer.setRegisteredProjectStatus(ApplicationStatus.Successful);  // if you have a status attribute
             System.out.println("Officer " + officer.getName() + " approved for project " + projectName.getProjectName());
             pendingApprovals.remove(projectName.getProjectName()); // remove from pending after approval
         } else {

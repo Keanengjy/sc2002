@@ -108,20 +108,52 @@ public class HDBOfficer extends AbstractUser {
         if (a == null) {
             return false;
         }
-        if (!"Successful".equalsIgnoreCase(a.getApplicationStatus())) {
+        if (a.getApplicationStatus() != ApplicationStatus.Successful) {
             return false;  // only book if they were marked successful
         }
 
-        a.setApplicationStatus("Booked");
+        a.setApplicationStatus(ApplicationStatus.Booked);
         HDBFlat chosen = new HDBFlat(flat, 0.0, project.getNeighborhood());
         a.setSelectedFlat(chosen);
 
         return true; 
     }
 
-    public void generateReceipt() {
+public String generateReceipt(Applicant a, Project project) {
 
-    }
+    // --- safety checks -------------------------------------------------
+    if (a == null)      throw new IllegalArgumentException("Applicant is null");
+    if (project == null) throw new IllegalArgumentException("Project is null");
+    if (a.getSelectedFlat() == null)
+        throw new IllegalStateException("Applicant has not selected a flat yet");
+    // -------------------------------------------------------------------
+
+    HDBFlat   flat      = a.getSelectedFlat();
+    FlatType  type      = flat.getFlatType();
+
+    StringBuilder sb = new StringBuilder();
+    sb.append("--------------------------------------------------\n");
+    sb.append("            H D B   B O O K I N G   R E C E I P T\n");
+    sb.append("--------------------------------------------------\n");
+    sb.append(String.format("Applicant Name  : %s%n", a.getName()));
+    sb.append(String.format("NRIC            : %s%n", a.getNRIC()));
+    sb.append(String.format("Age             : %d%n", a.getAge()));
+    sb.append(String.format("Marital Status  : %s%n", a.getMaritalStatus()));
+    sb.append("--------------------------------------------------\n");
+    sb.append(String.format("Project Name    : %s%n", project.getProjectName()));
+    sb.append(String.format("Neighbourhood   : %s%n", project.getNeighborhood()));
+    sb.append(String.format("Project ID      : %s%n", project.getProjectID()));
+    sb.append("--------------------------------------------------\n");
+    sb.append(String.format("Flat Type       : %s%n", type));
+    sb.append(String.format("Selling Price   : $%.2f%n", flat.getSellingPrice()));
+    sb.append(String.format("Location        : %s%n", flat.getLocation()));
+    sb.append(String.format("Booking Status  : %s%n",
+                 a.getApplicationStatus()));           // e.g.  Booked
+    sb.append("--------------------------------------------------\n");
+    sb.append("Thank you for choosing HDB. Please keep this receipt.\n");
+
+    return sb.toString();
+}
 
     public void viewStatus() {
         System.out.println("Status: " + registeredProjectStatus);

@@ -4,15 +4,19 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import fileops.ObjectCreate;
 import person.MaritalStatus;
-import project.ApplicationStatus;\
+import project.ApplicationStatus;
 import project.UserRole;
 
 import project.Enquiry;
+import project.FlatType;
 import project.HDBFlat;
 import project.Project;
+import person.HDBOfficer;
 
 public class Applicant extends AbstractUser {
     private Enquiry enquiry;
@@ -47,8 +51,8 @@ public class Applicant extends AbstractUser {
     public void setAppliedProject(String appliedProject) {this.appliedProject = appliedProject;}
     public ApplicationStatus getApplicationStatus() {return applicationStatus;}
     public void setApplicationStatus(ApplicationStatus applicationStatus) {this.applicationStatus = applicationStatus;}
-    public HDBFlat getSelectedFlat() {return selectedFlat;}
-    public void setSelectedFlat(HDBFlat selectedFlat) {this.selectedFlat = selectedFlat;}
+    public String getSelectedFlat() {return selectedFlat;}
+    public void setSelectedFlat(String selectedFlat) {this.selectedFlat = selectedFlat;}  // updated to accept String
 
     public void viewProject() {
         if (!loggedIn) {
@@ -59,51 +63,7 @@ public class Applicant extends AbstractUser {
         System.out.println("Viewing available projects...");
         // display available projects 
     }
-    
-    public void applyProject() {
-        if (!loggedIn) {
-            System.out.println("Please log in to apply for a project.");
-            return;
-        }
-        
-        if (appliedProject != null) {
-            System.out.println("You have already applied for a project: " + appliedProject);
-            return;
-        }
-        
-        // ADD APPLY PROJ METHOD
-        System.out.println("Application process initiated.");
-    }
-    
-    public void bookFlat() {
-        if (!loggedIn) {
-            System.out.println("Please log in to book a flat.");
-            return;
-        }
-        if (getApplicationStatus() == null || getApplicationStatus() != ApplicationStatus.Successful) {
-            System.out.println("You cannot book a flat until your application is successful.");
-            return;
-        }
-        
-        // ADD BOOK FLAT METHOD
-        System.out.println("Flat booking process initiated.");
-    }
-    
-    public boolean withdrawApplication() {
-        if (!loggedIn) {
-            System.out.println("Please log in to withdraw your application.");
-            return false;
-        }
-        if (appliedProject != null) {
-            System.out.println("Withdrawing application for project: " + appliedProject);
-            appliedProject = null;
-            applicationStatus = null;
-            selectedFlat = null;
-            return true;
-        }
-        System.out.println("No application to withdraw");
-        return false;
-    }
+
     
     public String editEnquiry() {
         if (!loggedIn) {
@@ -175,7 +135,7 @@ public class Applicant extends AbstractUser {
 */
 
     public String submitEnquiry() {
-        if (!loggedIn()) {
+        if (!loggedIn) {
             return "You must be logged in to submit an enquiry";
         }
         
@@ -208,7 +168,7 @@ public boolean deleteEnquiry(int enquiryID) {
     // Implementation to delete an enquiry with the given ID
     
     // Check if user is logged in
-    if (!loggedIn()) {
+    if (!loggedIn) {
         System.out.println("You must be logged in to delete an enquiry");
         return false;
     }
@@ -292,10 +252,16 @@ public boolean deleteEnquiry(int enquiryID) {
     private Enquiry getCurrentEnquiry() {
         // This would retrieve the currently selected enquiry from the application state
         // For now, we return a mock enquiry
-        Enquiry mockEnquiry = new Enquiry("Requesting for flat availability", 1003, 100);
+        int enquiryIDs = 12345;
+        int senderID = 1001;
+        String response = "We will get back to you shortly.";
+        int responderID = 2001;
+ 
         Map<String, String> message = new HashMap<>();
         message.put("subject", "Query about project");
         message.put("body", "When does the application period open?");
+        Enquiry mockEnquiry = new Enquiry(message,enquiryIDs,senderID,response,responderID);
+
         mockEnquiry.setMessage(message);
         mockEnquiry.setEnquiryID(12345);
         mockEnquiry.setSenderID(Integer.parseInt(getNRIC()));
@@ -304,8 +270,6 @@ public boolean deleteEnquiry(int enquiryID) {
     
     /**
      * Save changes to an existing enquiry
-     * @param enquiry The enquiry with updated information
-     * @return true if the update was successful, false otherwise
      */
     private boolean saveEnquiryChanges(Enquiry enquiry) {
         // This would save the updated enquiry to persistent storage
@@ -316,7 +280,6 @@ public boolean deleteEnquiry(int enquiryID) {
     
     /**
      * Generate a new unique enquiry ID
-     * @return A new unique enquiry ID
      */
     private int generateNewEnquiryID() {
         // This would generate a unique ID, possibly from a database sequence
@@ -326,8 +289,6 @@ public boolean deleteEnquiry(int enquiryID) {
     
     /**
      * Save a new enquiry
-     * @param enquiry The new enquiry to save
-     * @return true if the save was successful, false otherwise
      */
     private boolean saveNewEnquiry(Enquiry enquiry) {
         // This would save the new enquiry to persistent storage
@@ -338,15 +299,19 @@ public boolean deleteEnquiry(int enquiryID) {
     
     /**
      * Find an enquiry by ID
-     * @param enquiryID The ID of the enquiry to find
-     * @return The found Enquiry object, or null if not found
      */
     private Enquiry findEnquiry(int enquiryID) {
         // This would search for the enquiry in persistent storage
         // For now, we return a mock enquiry if the ID matches our test case
         if (enquiryID == 12345) {
-            Enquiry mockEnquiry = new Enquiry("Requesting for flat availability", 1001, 1002);
+            
             Map<String, String> message = new HashMap<>();
+            int enquiryIDs = 12345;
+            int senderID = 1001;
+            String response = "We will get back to you shortly.";
+            int responderID = 2001;
+            Enquiry mockEnquiry = new Enquiry(message,enquiryIDs,senderID,response,responderID);
+
             message.put("subject", "Query about project");
             message.put("body", "When does the application period open?");
             mockEnquiry.setMessage(message);
@@ -359,8 +324,6 @@ public boolean deleteEnquiry(int enquiryID) {
     
     /**
      * Remove an enquiry from the system
-     * @param enquiryID The ID of the enquiry to remove
-     * @return true if the removal was successful, false otherwise
      */
     private boolean removeEnquiry(int enquiryID) {
         // This would remove the enquiry from persistent storage

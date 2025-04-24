@@ -7,11 +7,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import fileops.ObjectCreate;
 import person.MaritalStatus;
 import project.ApplicationStatus;
 import project.UserRole;
 
 import project.Enquiry;
+import project.FlatType;
 import project.HDBFlat;
 import project.Project;
 
@@ -47,22 +49,44 @@ public class Application {
         applicant.setAppliedProject(project.getProjectName());
         applicant.setApplicationStatus(ApplicationStatus.Pending);
         System.out.println("Project applied successfully.");
+        
     }
 
-    public void bookFlat(HDBFlat flat) {
-        if (!applicant.isLoggedIn()) {
-            System.out.println("Applicant must be logged in to book a flat.");
+    public void bookFlat(HDBFlat flat, Applicant applicant, HDBOfficer officer) {
+        if (!applicant.loggedIn) {
+            System.out.println("Please log in to book a flat.");
+            return;
+        }
+        if (applicant.getApplicationStatus() == null || applicant.getApplicationStatus() != ApplicationStatus.Successful) {
+            System.out.println("You cannot book a flat until your application is successful.");
             return;
         }
 
-        if (applicant.getApplicationStatus() != ApplicationStatus.Successful) {
-            System.out.println("Application must be successful to book a flat.");
+        Project targetProject = null;
+        for (Project p : ObjectCreate.projectList) {          // or your project registry
+            if (applicant.getAppliedProject().equalsIgnoreCase(p.getProjectName())) {
+                targetProject = p;
+                break;
+            }
+        }
+
+        if (targetProject == null) {
+            System.out.println("Project \"" + applicant.getAppliedProject() + "\" not found.");
             return;
         }
 
-        this.selectedFlat = flat;
-        applicant.setSelectedFlat(flat);
-        System.out.println("Flat booked successfully: " + flat.getFlatNumber());
+        FlatType type = FlatType.valueOf(selectedFlat.toString());
+        boolean ok = officer.updateFlatCount(targetProject,type);
+
+        if (!ok) {
+            System.out.println("Sorry, no more units of that flat type are available.");
+            return;
+        }
+        applicant.setApplicationStatus(ApplicationStatus.Booked);   // or "Booked" string
+        System.out.println("Flat booking successful!");
+            
+        
+        
     }
 
     public void withdrawProject() {
@@ -84,23 +108,10 @@ public class Application {
         System.out.println("Application withdrawn successfully.");
     }
 
-    public ApplicationStatus getStatus() {
-        return status;
-    }
+    public ApplicationStatus getStatus() {return status;}
+    public void setStatus(ApplicationStatus status) {this.status = status;}
+    public Project getProject() {return project;}
+    public HDBFlat getSelectedFlat() {return selectedFlat;}
+    public Applicant getApplicant() {return applicant;}
 
-    public void setStatus(ApplicationStatus status) {
-        this.status = status;
-    }
-
-    public Project getProject() {
-        return project;
-    }
-
-    public HDBFlat getSelectedFlat() {
-        return selectedFlat;
-    }
-
-    public Applicant getApplicant() {
-        return applicant;
-    }
 }
