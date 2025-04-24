@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-public class HDBOfficer extends AbstractUser {
+public class HDBOfficer extends Applicant {
     private String projects;
     private Project registeredProject;
     private ApplicationStatus registeredProjectStatus;
@@ -89,15 +89,11 @@ public class HDBOfficer extends AbstractUser {
             System.out.printf("Applicant: %-20s | Project: %-25s | Status: %-12s%n",
                     applicant.getName(), project.getProjectName(), status);
 
-            // Optionally, if you want to show more details of the application
-            if (status == ApplicationStatus.Booked) {
-                HDBFlat selectedFlat = applicant.getSelectedFlat();
-                System.out.println("  - Selected Flat: " + selectedFlat.getFlatType());
-            }
 
             // If the application status is "Successful", offer the option to book a flat
             if (status == ApplicationStatus.Successful) {
                 System.out.println("Do you want to book a flat for this applicant? (yes/no): ");
+                Scanner sc = new Scanner(System.in);
                 String choice = sc.nextLine().trim();
 
                 if ("yes".equalsIgnoreCase(choice)) {

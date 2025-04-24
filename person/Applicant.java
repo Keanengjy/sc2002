@@ -26,7 +26,7 @@ public class Applicant extends AbstractUser {
     private String selectedFlat;
 
     public Applicant(String name, String NRIC, int age, String maritalStatus, 
-                    String password, boolean eligibilityCriteria, boolean loggedIn) {
+                    String password) {
         super(name, NRIC, age, maritalStatus, password);
         this.appliedProject = null;
         this.applicationStatus = null;
