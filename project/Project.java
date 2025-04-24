@@ -1,16 +1,9 @@
 package project;
 
-import project.FlatType;
-import project.Visibility;
-import person.MaritalStatus;
-import project.ApplicationStatus;
-
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import person.HDBManager;
 import person.HDBOfficer;
 
@@ -56,7 +49,7 @@ public class Project {
     public void setNeighborhood(String neighborhood) {this.neighborhood = neighborhood;}
     public void setManager(HDBManager manager) {this.manager = manager;}
     public void setProjectID(String projectID) {this.projectID = projectID;}
-    public void setApplicationStatus(ApplicationStatus status) {this.applicationStatus = status};
+    public void setApplicationStatus(ApplicationStatus status) {this.applicationStatus = status;}
     public void setVisibility(boolean visibility) {this.visibility = visibility;}
     public void setApplicationOpeningDate(String date) {this.applicationOpeningDate = date;}
     public void setApplicationClosingDate(String date) {this.applicationClosingDate = date;}
