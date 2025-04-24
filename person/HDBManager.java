@@ -1,7 +1,9 @@
 package person;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import project.ApplicationStatus;
 import project.Enquiry;
 import project.Project;
@@ -12,12 +14,12 @@ import project.Visibility;
 public class HDBManager extends AbstractUser {
     private String HDBOfficersUnder;
     private List<Project> managedProjects;
-    private List<String> pendingApprovals;
+    private Map<String, HDBOfficer> pendingApprovals = new HashMap<>();
     private List<String> pendingApprovalOfficers;
 
     public HDBManager(String name, String NRIC, int age, String maritalStatus, String password) {
         super(name, NRIC, age, maritalStatus, password);
-        this.pendingApprovals = new ArrayList<>();
+        this.pendingApprovals = new HashMap<>();
         this.pendingApprovalOfficers = new ArrayList<>();
         this.managedProjects = new ArrayList<>();
         this.HDBOfficersUnder = "";
@@ -58,29 +60,20 @@ public class HDBManager extends AbstractUser {
         enquiry.setResponderID(Integer.parseInt(this.getNRIC()));
     }
 
-    public void approveOfficer(HDBOfficer officer, Project project) {
-        if (officer != null && project != null) {
-            // Approve the officer for the project
-            project.addOfficer(officer);
-            // Update available slots
-            // Here we would update the available slots count
-            System.out.println("Officer " + officer.getName() + " approved for project " + project.getProjectName());
-            // Remove from pending approvals
-            pendingApprovalOfficers.remove(officer.getNRIC());
+    public void approveOfficer(Project projectName) {
+        HDBOfficer officer = pendingApprovals.get(projectName.getProjectName());
+        if (officer != null) {
+            officer.setRegisteredProject(projectName);  // assuming this setter exists
+            officer.setRegisteredProjectStatus(ApplicationStatus.Successful);  // if you have a status attribute
+            System.out.println("Officer " + officer.getName() + " approved for project " + projectName.getProjectName());
+            pendingApprovals.remove(projectName.getProjectName()); // remove from pending after approval
+        } else {
+            System.out.println("No pending officer found for project " + projectName);
         }
     }
 
-    public void applicationDecision(String decision, int applicationId) {
-        //pendingApprovals.put(projectName, officer);
-        ApplicationStatus status;
-        if (decision.equalsIgnoreCase("Approved")) {
-            status = ApplicationStatus.Successful;
-        } else {
-            status = ApplicationStatus.Unsuccessful;
-        }
-        System.out.println("Application " + applicationId + " status updated to " + status);
-        // Remove from pending approvals
-        pendingApprovals.remove(applicationId);
+    public void applicationDecision(String projectName, HDBOfficer officer) {
+        pendingApprovals.put(projectName, officer);
     }
     
 
@@ -112,10 +105,10 @@ public class HDBManager extends AbstractUser {
         this.managedProjects = projects;
     }
 
-    public List<String> getPendingApprovals() {
+    public Map<String, HDBOfficer> getPendingApprovals() {
         return this.pendingApprovals;
     }
-    public void setPendingApprovals(List<String> approvals) {
+    public void setPendingApprovals(Map<String, HDBOfficer> approvals) {
         this.pendingApprovals = approvals;
     }
 
