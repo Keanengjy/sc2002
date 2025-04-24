@@ -5,7 +5,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import project.ApplicationStatus;
+
+import person.MaritalStatus;
+import project.ApplicationStatus;\
+import project.UserRole;
+
 import project.Enquiry;
 import project.HDBFlat;
 import project.Project;
@@ -16,9 +20,9 @@ public class Applicant extends AbstractUser {
     private ApplicationStatus applicationStatus;
     private HDBFlat selectedFlat;
 
-    public Applicant(String name, String NRIC, int age, MaritalStatus maritalStatus, 
+    public Applicant(String name, String NRIC, int age, String maritalStatus, 
                     String password, boolean eligibilityCriteria, boolean loggedIn) {
-        super(name, NRIC, age, maritalStatus, password, eligibilityCriteria, loggedIn);
+        super(name, NRIC, age, maritalStatus, password);
         this.appliedProject = null;
         this.applicationStatus = null;
         this.selectedFlat = null;
@@ -28,10 +32,14 @@ public class Applicant extends AbstractUser {
         return UserRole.Applicant;
     }
 
+    public boolean checkEligibility(Project project) {
+        return eligibilityCriteria;
+    }
+
     public String getAppliedProject() {return appliedProject;}
     public void setAppliedProject(String appliedProject) {this.appliedProject = appliedProject;}
-    public String getApplicationStatus() {return applicationStatus;}
-    public void setApplicationStatus(String applicationStatus) {this.applicationStatus = applicationStatus;}
+    public ApplicationStatus getApplicationStatus() {return applicationStatus;}
+    public void setApplicationStatus(ApplicationStatus applicationStatus) {this.applicationStatus = applicationStatus;}
     public HDBFlat getSelectedFlat() {return selectedFlat;}
     public void setSelectedFlat(HDBFlat selectedFlat) {this.selectedFlat = selectedFlat;}
 
@@ -91,7 +99,7 @@ public class Applicant extends AbstractUser {
     }
     
     public String editEnquiry() {
-        if (!loggedIn()) {
+        if (!loggedIn) {
             return "You must be logged in to edit an enquiry";
         }
         
@@ -106,7 +114,7 @@ public class Applicant extends AbstractUser {
         }
         
         // Check if the enquiry belongs to this applicant
-        if (!enquiryToEdit.getSenderID().equals(getNRIC())) {
+        if (enquiryToEdit.getSenderID() != Integer.parseInt(getNRIC())) {
             return "You can only edit your own enquiries";
         }
         

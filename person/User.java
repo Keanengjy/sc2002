@@ -1,5 +1,7 @@
 package person;
+
 import project.Project;
+import project.UserRole;
 
 public interface User {
     void login(String username, String password);

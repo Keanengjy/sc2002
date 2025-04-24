@@ -21,8 +21,6 @@ abstract class AbstractUser implements User {
         this.name = name;
         this.NRIC = NRIC;
         this.age = age;
-        this.NRIC = NRIC;
-        this.age = age;
         this.maritalStatus = maritalStatus;
         this.password = password;
         this.eligibilityCriteria = false; // Default to no access permissions
@@ -42,6 +40,7 @@ abstract class AbstractUser implements User {
     public boolean isLoggedIn() { return loggedIn; } // Add getter for loggedIn 
 
     public void changePassword(String newPassword) { this.password = newPassword; }
+
     public void login(String username, String password) {
         if (this.NRIC.equals(username) && this.password.equals(password)) {
             this.loggedIn = true;

@@ -28,7 +28,7 @@ public class Main {
 
             // // grab objects built in ObjectCreate
             // HDBOfficer officer = ObjectCreate.officerMap.get("Daniel");
-            Project     p      = ObjectCreate.projectList.get(0);   // first project for demo
+            Project p = ObjectCreate.projectList.get(0);   // first project for demo
             
             // /* Officer submits application */
             // officer.registerProject(p);
