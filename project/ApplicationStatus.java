@@ -2,7 +2,7 @@ package project;
 
 public enum ApplicationStatus {
     Pending,
-    Approved,
-    Rejected,
+    Successful,
+    Unsuccessful,
     Booked
 }

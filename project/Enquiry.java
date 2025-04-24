@@ -8,6 +8,7 @@ import project.ApplicationStatus;
 import person.HDBManager;
 import person.HDBOfficer;
 import person.Applicant;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Enquiry {
@@ -30,6 +31,9 @@ public class Enquiry {
         for (Map.Entry<String, String> entry : message.entrySet()) {
             System.out.println("Enquiry from: " + entry.getKey() + " - Message: " + entry.getValue());
         }
+    }
+    public void setMessage(Map<String, String> message) {
+        this.message = message;
     }
 
     public void setMessage(String enquiry) {
@@ -72,5 +76,34 @@ public class Enquiry {
 
     public int getResponderID() {
         return responderID;
+    }
+    
+    public String getEnquiry() {
+        StringBuilder enquiryDetails = new StringBuilder();
+        enquiryDetails.append("Enquiry ID: ").append(enquiryID).append("\n");
+        enquiryDetails.append("Sender ID: ").append(senderID).append("\n");
+        
+        enquiryDetails.append("Message: \n");
+        for (Map.Entry<String, String> entry : message.entrySet()) {
+            enquiryDetails.append("  ").append(entry.getKey()).append(": ")
+                         .append(entry.getValue()).append("\n");
+        }
+        
+        if (responderID != -1) {
+            enquiryDetails.append("Response: ").append(response).append("\n");
+            enquiryDetails.append("Responder ID: ").append(responderID).append("\n");
+        } else {
+            enquiryDetails.append("Status: Pending response\n");
+        }
+        
+        return enquiryDetails.toString();
+    }
+    
+    public void setEnquiry(String enquiry) {
+        // In a real implementation, this would parse the enquiry string
+        // and populate the message map accordingly
+        Map<String, String> messageMap = new HashMap<>();
+        messageMap.put("content", enquiry);
+        this.message = messageMap;
     }
 }

@@ -1,4 +1,8 @@
 package person;
+import project.Project;
+import person.MaritalStatus;
+import project.Project;
+import project.UserRole;
 
 import person.MaritalStatus;
 import project.Project;
@@ -15,6 +19,8 @@ abstract class AbstractUser implements User {
 
     public AbstractUser(String name, String NRIC, int age, String maritalStatus, String password) {
         this.name = name;
+        this.NRIC = NRIC;
+        this.age = age;
         this.NRIC = NRIC;
         this.age = age;
         this.maritalStatus = maritalStatus;
@@ -36,20 +42,35 @@ abstract class AbstractUser implements User {
     public boolean isLoggedIn() { return loggedIn; } // Add getter for loggedIn 
 
     public void changePassword(String newPassword) { this.password = newPassword; }
-
-    public boolean login(String username, String password) {
+    public void login(String username, String password) {
         if (this.NRIC.equals(username) && this.password.equals(password)) {
             this.loggedIn = true;
-            return true;
+            System.out.println("Login successful for user: " + this.name);
+        } else {
+            System.out.println("Login failed. Invalid credentials.");
         }
-        return false;
+
     }
-    public void logout() { this.loggedIn = false; }
+    public void logout() {
+        if (this.loggedIn) {
+            this.loggedIn = false;
+            System.out.println("User logged out successfully.");
+        } else {
+            System.out.println("No user is currently logged in.");
+        }
+    }
+
 
     // This method acts as an access control check based on eligibility criteria
     public abstract boolean checkEligibility(Project project);
 
     public UserRole getRole() {
         return UserRole.Applicant; // Default role, can be overridden in subclasses
+    }
+
+    class InvalidPasswordException extends Exception {
+        public InvalidPasswordException(String message) {
+            super(message);
+        }
     }
 }
