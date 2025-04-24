@@ -84,6 +84,7 @@ public class HDBFlat {
             availableFlats.remove(match);              // last unit → remove entry
         } else {
             availableFlats.put(match, remaining - 1);  // otherwise minus‑1
+            project.getFlats().put(flatType, remaining - 1); // update Typeflats map
         }
 
         /* 4 ─ attach flat to the application -------------------------- */

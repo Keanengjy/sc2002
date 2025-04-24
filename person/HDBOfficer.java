@@ -36,6 +36,7 @@ public class HDBOfficer extends Applicant {
     public void registerProject(Project p) {
 
         this.registeredProjectStatus = ApplicationStatus.Pending;
+        p.getManager().addPendingApprovalOfficer(this.getName());
         p.getManager().applicationDecision(p.getProjectName(), this);
         System.out.println(name + " registering for project: " + p.getProjectName() + ". Awaiting approval.");
     }
@@ -70,7 +71,6 @@ public class HDBOfficer extends Applicant {
         scanner.close();
     }
 
-// In HDBOfficer class or wherever applicable
 
     public void viewBookingApplication() {
         // Check if the application registry is empty

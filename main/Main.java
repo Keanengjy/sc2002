@@ -121,54 +121,36 @@ public class Main {
     }
 
     /* ------------ approve / reject officer project‑registration ---------- */
-    private static void approveOfficersFlow(HDBManager mgr) {
+    public static void approveOfficersFlow(HDBManager m) {
+        System.out.println("\n--- Approving Officer Registration ---");
 
-        // collect all pending officer‑name strings across projects
-        List<Project> withPending = ObjectCreate.projectList.stream()
-                .filter(p -> !mgr.getPendingApprovalOfficers().isEmpty())
-                .toList();
-
-        if (withPending.isEmpty()) {
+        // Check if there are any officers pending approval
+        if (m.getPendingApprovalOfficers().isEmpty()) {
             System.out.println("No pending officer registration requests.");
             return;
         }
 
-        int idx = 0;
-        Map<Integer, Map.Entry<Project, String>> indexMap = new HashMap<>();
+        List<String> toRemove = new ArrayList<>();
 
-        for (Project p : withPending) {
-            for (String offName : mgr.getPendingApprovalOfficers()) {
-                System.out.printf("[%d] Officer %-12s | Project %-20s%n",
-                        idx, offName, p.getProjectName());
-                indexMap.put(idx++, Map.entry(p, offName));
+        for (String Name : m.getPendingApprovalOfficers()) {
+            HDBOfficer officer = ObjectCreate.officerMap.get(Name);
+            if (officer == null) {
+                toRemove.add(Name);
+                continue;
             }
+
+            System.out.print("Approve this officer " + Name + "? (yes/no): ");
+            if ("yes".equalsIgnoreCase(sc.nextLine().trim())) {
+                m.approveOfficer(officer); // change status only
+                System.out.println("Officer " + Name + " approved.");
+            } else {
+                System.out.println("Officer " + Name + " rejected.");
+            }
+            toRemove.add(Name); // mark for deletion
         }
 
-        System.out.print("Select # to approve/reject (or -1 to cancel): ");
-        int choice = Integer.parseInt(sc.nextLine());
-        if (!indexMap.containsKey(choice))
-            return;
-
-        var entry = indexMap.get(choice);
-        Project project = entry.getKey();
-        String offName = entry.getValue();
-
-        // look‑up the HDBOfficer object from global map (null if missing)
-        HDBOfficer officer = ObjectCreate.officerMap.get(offName);
-
-        System.out.print("Approve this officer? (yes/no): ");
-        boolean approve = sc.nextLine().trim().equalsIgnoreCase("yes");
-
-        // your manager’s method now gets a String or object? adapt accordingly
-        mgr.approveOfficer(project); // <‑ pass officer object
-
-        if (approve && officer != null) {
-            project.getOfficers().add(officer); // officially add to project
-        }
-        // remove from pending list regardless of outcome
-        mgr.getPendingApprovalOfficers().remove(offName);
-
-        System.out.println(approve ? "Officer approved." : "Officer rejected.");
+        // remove after the loop ‑‑ safe
+        m.getPendingApprovalOfficers().removeAll(toRemove);
     }
 
     private static void applyFlow(Applicant a) {
@@ -235,42 +217,60 @@ public class Main {
 
     }
 
-      /* ----- extracted method for clarity (same logic you had) ------- */
+    /* ----- View and Book Flats for Applicants ------- */
     private static void viewAndBookApplications(HDBOfficer o) {
         System.out.println("\n--- Viewing All Applications ---");
         for (Application app : Application.applicationRegistry) {
+
             Applicant applicant = app.getApplicant();
-            Project   project   = app.getProject();
-            ApplicationStatus st= app.getStatus();
+            Project project = app.getProject();
+            ApplicationStatus st = app.getStatus();
 
             System.out.printf("Applicant: %-20s | Project: %-25s | Status: %-12s%n",
-                            applicant.getName(), project.getProjectName(), st);
+                    applicant.getName(), project.getProjectName(), st);
 
-            if (st == ApplicationStatus.Booked && app.getSelectedFlat() != null) {
-                System.out.println("  - Selected Flat: " +
-                                app.getSelectedFlat().getFlatType());
+            if (st != ApplicationStatus.Successful)
+                continue;
+
+            /* ask if officer wants to book */
+            System.out.print("Book a flat for this applicant? (yes/no): ");
+            if (!sc.nextLine().trim().equalsIgnoreCase("yes"))
+                continue;
+
+            /* choose flat type */
+            System.out.print("Enter flat type to book (2/3): ");
+            FlatType type = switch (sc.nextLine().trim()) {
+                case "2" -> FlatType.TwoRoom;
+                case "3" -> FlatType.ThreeRoom;
+                default -> null;
+            };
+            if (type == null) {
+                System.out.println("Invalid flat type.");
+                continue;
             }
 
-            if (st == ApplicationStatus.Successful) {
-                System.out.print("Book a flat for this applicant? (yes/no): ");
-                if (sc.nextLine().trim().equalsIgnoreCase("yes")) {
+            /* ---- update applicant & application via updateInfo ---- */
+            boolean infoOK = o.updateInfo(applicant.getNRIC(),
+                    ObjectCreate.applicantMap,
+                    project,
+                    type,
+                    app);
+            if (!infoOK) {
+                System.out.println("Booking failed (unit not available).");
+                continue;
+            }
 
-                    HDBFlat chosen = app.getSelectedFlat();
-                    if (chosen == null) {
-                        System.out.println("No flat selected for this application.");
-                        continue;
-                    }
+            /* ---- decrement stock ---------------------------------- */
+            boolean stockOK = o.updateFlatCount(project, type, app);
+            if (stockOK) {
+                System.out.println("Flat booked for " + applicant.getName() + ".");
+                System.out.println(project.getFlats());
 
-                    boolean ok = o.updateFlatCount(project,
-                                                chosen.getFlatType(),
-                                                app);
-                    if (ok) {
-                        applicant.setApplicationStatus(ApplicationStatus.Booked);
-                        System.out.println("Flat booked for " + applicant.getName() + ".");
-                    } else {
-                        System.out.println("Booking failed (no units).");
-                    }
-                }
+            } else {
+                System.out.println("Booking failed while updating stock.");
+                // roll back statuses if needed
+                applicant.setApplicationStatus(ApplicationStatus.Successful);
+                app.setStatus(ApplicationStatus.Successful);
             }
         }
     }
@@ -279,77 +279,139 @@ public class Main {
     private static void applicantMenu(Applicant a) {
         while (true) {
             System.out.printf("%nApplicant %s | Status: %s%n",
-                              a.getName(), a.getApplicationStatus());
+                    a.getName(), a.getApplicationStatus());
             System.out.println("[1] List projects");
             System.out.println("[2] Apply for a project");
             System.out.println("[3] Book flat (if Successful)");
             System.out.println("[4] View my application");
-            System.out.println("[5] Withdraw my application");   // ← new option
+            System.out.println("[5] Withdraw my application"); // ← new option
             System.out.println("[6] Logout");
             System.out.print("Choice: ");
             String c = sc.nextLine().trim();
-            if ("6".equals(c)) break;
-    
+            if ("6".equals(c))
+                break;
+
             switch (c) {
-                case "1" -> ObjectCreate.projectList.forEach(p ->
-                         System.out.println(p.getProjectName() + " " +
-                                            p.getAvailableFlatsByType()));
+                case "1" -> ObjectCreate.projectList.forEach(p -> System.out.println(p.getProjectName() + " " +
+                        p.getFlats()));
                 case "2" -> applyFlow(a);
                 case "3" -> bookingFlow(a);
                 case "4" -> a.viewProject();
-                case "5" ->     {Application app = Application.findApplicationForApplicant(a);
-                                if (app == null) {System.out.println("No application found to withdraw.");return;}
-                                app.withdrawProject();               // method you provided in Application
-                                Application.applicationRegistry.remove(app);}  // remove from pending list
-                default  -> System.out.println("Invalid choice.");
+                case "5" -> {
+                    Application app = Application.findApplicationForApplicant(a);
+                    if (app == null) {
+                        System.out.println("No application found to withdraw.");
+                        return;
+                    }
+                    app.withdrawProject(); // method you provided in Application
+                    Application.applicationRegistry.remove(app);
+                } // remove from pending list
+                default -> System.out.println("Invalid choice.");
             }
         }
     }
-   
+
     /* ----------------------- Officer menu --------------------------- */
     private static void officerMenu(HDBOfficer o) {
         System.out.printf("%nOfficer %s logged in%n", o.getName());
-
-        officerLoop:
-        while (true) {
+    
+        officerLoop: while (true) {
             System.out.println("""
-                [1] List all projects & stock
-                [2] List / manage applications
-                [3] Applicant functions
-                [4] Logout""");
+                    [1] List all projects & stock
+                    [2] List / manage applications
+                    [3] Apply for a project
+                    [4] Applicant functions
+                    [5] Get Application by NRIC
+                    [6] Generate Receipt for Booked Application
+                    [7] Logout""");
             System.out.print("Choice: ");
             String sel = sc.nextLine().trim();
-
+    
             switch (sel) {
-
-                case "1" -> ObjectCreate.projectList.forEach(p ->
-                            System.out.println(p.getProjectName() + " " +
-                                            p.getAvailableFlatsByType()));
-
-                case "2" -> viewAndBookApplications(o);   // extracted block
-
-                case "3" -> {if (ObjectCreate.officerMap.containsKey(o.getName())) {        // officer logged in
-                                    HDBOfficer officer = ObjectCreate.officerMap.get(o.getName());
-                                
-                                    /* up‑cast the officer to Applicant */
-                                    Applicant officerAsApplicant = (Applicant) officer;   // implicit up‑cast
-                                
-                                    /* you can now call applicant‑only code with that reference */
-                                    applicantMenu(officerAsApplicant);        // reuse normal applicant flow}
-                                
-                                applicantMenu(officerAsApplicant);}}             // officer acts as applicant
-
-                case "4" -> { break officerLoop; }
-
+    
+                case "1" -> ObjectCreate.projectList.forEach(p -> 
+                        System.out.println(p.getProjectName() + " " + p.getFlats()));
+    
+                case "2" -> {
+                    // Manage and book applications
+                    viewAndBookApplications(o);
+                }
+    
+                case "3" -> { // Officer applies for a project
+                    System.out.print("Enter project name to apply: ");
+                    String projectName = sc.nextLine().trim();
+                    Project project = ObjectCreate.projectList.stream()
+                            .filter(p -> p.getProjectName().equals(projectName))
+                            .findFirst()
+                            .orElse(null);
+                    if (project != null) {
+                        o.registerProject(project);
+                        System.out.println("You have applied for " + project.getProjectName() + ".");
+                    } else {
+                        System.out.println("Project not found.");
+                    }
+                }
+    
+                case "4" -> applicantMenu(o); // Up-cast implicit
+    
+                case "5" -> { 
+                    // Get application details by NRIC
+                    System.out.print("Enter the NRIC of the applicant: ");
+                    String nric = sc.nextLine().trim();
+    
+                    // Assume you have an application object
+                    Application app = Application.applicationRegistry.stream()
+                            .filter(a -> a.getApplicant().getNRIC().equals(nric))
+                            .findFirst()
+                            .orElse(null);
+                    
+                    if (app != null) {
+                        // Call getApplication to retrieve project and flat details
+                        String[] appDetails = o.getApplication(nric, ObjectCreate.applicantMap, app);
+                        
+                        if (appDetails != null) {
+                            System.out.printf("Applicant's Project: %s%n", appDetails[0]);
+                            System.out.printf("Selected Flat: %s%n", appDetails[1]);
+                        } else {
+                            System.out.println("No application found for this NRIC.");
+                        }
+                    } else {
+                        System.out.println("No application found for this NRIC.");
+                    }
+                }
+    
+                case "6" -> { 
+                    // Generate receipt for a booked application
+                    System.out.print("Enter the NRIC of the applicant to generate a receipt: ");
+                    String nric = sc.nextLine().trim();
+    
+                    // Find the application for the given NRIC
+                    Application app = Application.applicationRegistry.stream()
+                            .filter(a -> a.getApplicant().getNRIC().equals(nric))
+                            .findFirst()
+                            .orElse(null);
+                    
+                    if (app != null && app.getStatus() == ApplicationStatus.Booked) {
+                        // Generate and display the receipt
+                        Applicant applicant = app.getApplicant();
+                        Project project = app.getProject();
+                        String receipt = o.generateReceipt(applicant, project, app);
+                        System.out.println(receipt);  // Print the generated receipt
+                    } else {
+                        System.out.println("No booked application found for this NRIC.");
+                    }
+                }
+    
+                case "7" -> {
+                    break officerLoop;
+                }
+    
                 default -> System.out.println("Invalid choice, try again.");
             }
         }
     }
-
-
-
-
-
+    
+    
 
     /* ----------------------- Manager --------------------------- */
     private static void managerMenu(HDBManager m) {
