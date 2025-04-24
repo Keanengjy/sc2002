@@ -36,6 +36,7 @@ public class HDBOfficer extends Applicant {
     public void registerProject(Project p) {
 
         this.registeredProjectStatus = ApplicationStatus.Pending;
+        p.setAvailableHDBOfficerSlots(p.getAvailableHDBOfficerSlots() - 1);
         p.getManager().addPendingApprovalOfficer(this.getName());
         p.getManager().applicationDecision(p.getProjectName(), this);
         System.out.println(name + " registering for project: " + p.getProjectName() + ". Awaiting approval.");
@@ -58,17 +59,47 @@ public class HDBOfficer extends Applicant {
         }
     }
 
-    public void replyEnquiry(Enquiry enquiry) {
-        // Assuming this method is supposed to reply to an enquiry
-        enquiry.getMessage();
-        Scanner scanner = new Scanner(System.in);
+    public void replyEnquiries(List<Enquiry> list, Scanner sc) {
+
+        // collect unanswered enquiries
+        List<Enquiry> pending = list.stream()
+                .filter(e -> e.getResponse() == null || e.getResponse().isBlank())
+                .toList();
+    
+        if (pending.isEmpty()) {
+            System.out.println("No enquiries awaiting reply.");
+            return;
+        }
+    
+        System.out.println("\n--- Unanswered Enquiries ---");
+        for (int i = 0; i < pending.size(); i++) {
+            Enquiry e = pending.get(i);
+            String msg = e.getMessage().values().iterator().next(); // single entry
+            System.out.printf("[%d] ID:%d  From:%s  \"%s\"%n",
+                    i, e.getEnquiryID(), e.getSenderID(), msg);
+        }
+    
+        System.out.print("Select enquiry number to reply (or -1 to cancel): ");
+        int choice;
+        try {
+            choice = Integer.parseInt(sc.nextLine().trim());
+        } catch (NumberFormatException ex) {
+            System.out.println("Invalid input.");
+            return;
+        }
+        if (choice < 0 || choice >= pending.size()) return;
+    
+        Enquiry target = pending.get(choice);
+    
         System.out.print("Enter your reply: ");
-        String response = scanner.nextLine();
-
-        enquiry.setResponse(response);
-        System.out.println("Reply sent: " + response);
-
-        scanner.close();
+        String response = sc.nextLine().trim();
+        if (response.isBlank()) {
+            System.out.println("Reply not sent (empty).");
+            return;
+        }
+    
+        target.setResponse(response);
+        System.out.println("Reply sent to enquiry " + target.getEnquiryID());
     }
 
 

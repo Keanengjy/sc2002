@@ -15,6 +15,7 @@ public class ObjectCreate {
     public static final Map<String,Applicant> applicantMap = new HashMap<>();
     public static final List<HDBOfficer> projectOfficers = new ArrayList<>();
     public static final List<Project>        projectList = new ArrayList<>();
+    public static final List<Enquiry>        enquiryList = new ArrayList<>();
 
     static {      // static‑init block runs once
         try {

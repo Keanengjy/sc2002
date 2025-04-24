@@ -285,10 +285,14 @@ public class Main {
             System.out.println("[3] Book flat (if Successful)");
             System.out.println("[4] View my application");
             System.out.println("[5] Withdraw my application"); // ← new option
-            System.out.println("[6] Logout");
+            System.out.println("[6] Submit enquiry"); // ← new option
+            System.out.println("[7] Edit enquiry"); // ← new option
+            System.out.println("[8] Delete enquiry"); // ← new option
+            System.out.println("[9] View all enquiries"); // ← new option
+            System.out.println("[10] Logout"); // updated to reflect new option
             System.out.print("Choice: ");
             String c = sc.nextLine().trim();
-            if ("6".equals(c))
+            if ("10".equals(c)) // updated to reflect new option
                 break;
 
             switch (c) {
@@ -306,6 +310,32 @@ public class Main {
                     app.withdrawProject(); // method you provided in Application
                     Application.applicationRegistry.remove(app);
                 } // remove from pending list
+                case "6" -> {           // in applicantMenu, for example
+                    Enquiry e = a.submitEnquiry();
+                    if (e != null) {
+                        // do anything else (notify officers, etc.)
+                    }
+                }
+                case "7" -> a.editEnquiry(sc);
+                case "8" -> {                       // Delete an enquiry
+                    System.out.print("Enter enquiry ID to delete: ");
+                    int id;
+                    try {
+                        id = Integer.parseInt(sc.nextLine().trim());
+                    } catch (NumberFormatException ex) {
+                        System.out.println("Invalid ID.");
+                        break;
+                    }
+                
+                    boolean ok = a.deleteEnquiry(id);   // calls your method
+                    if (ok) {
+                        System.out.println("Enquiry deleted successfully.");
+
+                    }
+                }
+                case "9" -> {
+                    System.out.println(Enquiry.viewAllEnquiries(ObjectCreate.enquiryList));
+                }
                 default -> System.out.println("Invalid choice.");
             }
         }
@@ -323,7 +353,9 @@ public class Main {
                     [4] Applicant functions
                     [5] Get Application by NRIC
                     [6] Generate Receipt for Booked Application
-                    [7] Logout""");
+                    [7] Reply to Enquiries
+                    [8] View all enquiries
+                    [9] Logout""");
             System.out.print("Choice: ");
             String sel = sc.nextLine().trim();
     
@@ -401,11 +433,18 @@ public class Main {
                         System.out.println("No booked application found for this NRIC.");
                     }
                 }
-    
-                case "7" -> {
-                    break officerLoop;
+
+                case "7" -> o.replyEnquiries(ObjectCreate.enquiryList, sc);
+                
+                case "8" -> {
+                    System.out.println(Enquiry.viewAllEnquiries(ObjectCreate.enquiryList));
                 }
-    
+                case "9" -> {
+                    // Logout
+                    System.out.println("Logging out...");
+                    break officerLoop; // exit the loop to log out
+                }
+                
                 default -> System.out.println("Invalid choice, try again.");
             }
         }
@@ -416,33 +455,163 @@ public class Main {
     /* ----------------------- Manager --------------------------- */
     private static void managerMenu(HDBManager m) {
         System.out.printf("%nManager %s logged in%n", m.getName());
-
+    
         while (true) {
             System.out.println("""
                     [1] List all projects & stock
                     [2] Approve / Reject applicant applications
                     [3] Approve / Reject officer registration
-                    [4] Logout""");
+                    [4] View all applications
+                    [5] Create a new project
+                    [6] Edit a project
+                    [7] Delete a project
+                    [8] Toggle project visibility
+                    [9] View all enquiries
+                    [10] Reply to enquiries
+                    [11] Logout""");
             System.out.print("Choice: ");
             String ch = sc.nextLine().trim();
-
+    
             switch (ch) {
-                case "1" -> // list projects
+                case "1" -> // List all projects and stock
                     ObjectCreate.projectList
-                            .forEach(p -> System.out.println(p.getProjectName() + " " + p.getAvailableFlatsByType()));
-
+                            .forEach(p -> System.out.println(p.getProjectName() + " " + p.getFlats()));
+    
                 case "2" -> approveApplicantsFlow(m);
-
+    
                 case "3" -> approveOfficersFlow(m);
-
-                case "4" -> {
-                    return;
+    
+                case "4" -> { 
+                    // Display all applications
+                    System.out.println("\n--- Viewing All Applications ---");
+    
+                    // Iterate over all applications in the application registry
+                    for (Application app : Application.applicationRegistry) {
+                        Applicant applicant = app.getApplicant();
+                        Project project = app.getProject();
+                        ApplicationStatus status = app.getStatus();
+                        HDBFlat flat = app.getSelectedFlat(); // Flat might be null if not booked
+    
+                        // Display details for each application
+                        System.out.printf("Applicant: %-20s | Project: %-25s | Status: %-12s%n", 
+                                applicant.getName(), project.getProjectName(), status);
+    
+                        // If flat is booked, show the flat type
+                        if (status == ApplicationStatus.Booked && flat != null) {
+                            System.out.println("  - Selected Flat: " + flat.getFlatType());
+                        } else if (status != ApplicationStatus.Booked) {
+                            System.out.println("  - No flat booked yet.");
+                        }
+    
+                        System.out.println("--------------------------------------------------");
+                    }
                 }
+    
+                case "5" -> { 
+                    // Create a new project
+                    System.out.print("Enter project name: ");
+                    String projectName = sc.nextLine().trim();
+                    
+                    System.out.print("Enter neighborhood: ");
+                    String neighborhood = sc.nextLine().trim();
+                    
+                    System.out.print("Enter project ID: ");
+                    String projectID = sc.nextLine().trim();
+                    
+                    ApplicationStatus applicationStatus = ApplicationStatus.Pending;
+                
+                    System.out.print("Enter visibility (true/false): ");
+                    boolean visibility = Boolean.parseBoolean(sc.nextLine().trim());
+                
+                    System.out.print("Enter application opening date (YYYY-MM-DD): ");
+                    String applicationOpeningDate = sc.nextLine().trim();
+                    
+                    System.out.print("Enter application closing date (YYYY-MM-DD): ");
+                    String applicationClosingDate = sc.nextLine().trim();
+                
+                    // Assuming we need to initialize available flats and their quantities (for simplicity)
+                    Map<HDBFlat, Integer> availableFlats = new HashMap<>();
+                    System.out.print("Enter quantity for 2-room flats: ");
+                    int twoRoomQty = Integer.parseInt(sc.nextLine().trim());
+                    System.out.print("Enter quantity for 3-room flats: ");
+                    int threeRoomQty = Integer.parseInt(sc.nextLine().trim());
+                
+                    // You can create flat objects (this is just a simple example)
+                    HDBFlat twoRoomFlat = new HDBFlat(FlatType.TwoRoom, 0, neighborhood); // Modify constructor as needed
+                    HDBFlat threeRoomFlat = new HDBFlat(FlatType.ThreeRoom, 0, neighborhood);
+                    
+                    availableFlats.put(twoRoomFlat, twoRoomQty);
+                    availableFlats.put(threeRoomFlat, threeRoomQty);
+                
+                    // List of officers assigned to the project
+                    List<HDBOfficer> officers = new ArrayList<>();
+                
+                    System.out.print("Enter the number of available officer slots (max 10): ");
+                    int availableOfficerSlots = Integer.parseInt(sc.nextLine().trim());
 
+                    // Ensure the value does not exceed 10
+                    if (availableOfficerSlots > 10) {
+                        System.out.println("Maximum number of officer slots is 10. Setting to 10.");
+                        availableOfficerSlots = 10;
+                    }
+                
+                    // Now we create the project
+                    
+                    m.createProject(projectName, neighborhood, projectID, applicationStatus,
+                    visibility, applicationOpeningDate, applicationClosingDate,
+                    availableFlats, officers, availableOfficerSlots, 
+                    twoRoomQty, threeRoomQty);
+                    System.out.println("New project created successfully!");
+                }
+    
+                case "6" -> { 
+                    // Edit a project
+                    System.out.print("Enter the project name to edit: ");
+                    String projectName = sc.nextLine().trim();
+                    System.out.print("Enter new project name: ");
+                    String newName = sc.nextLine().trim();
+                    m.editProject(projectName, newName);
+                    System.out.println("Project name updated successfully!");
+                }
+    
+                case "7" -> { 
+                    // Delete a project
+                    System.out.print("Enter the project name to delete: ");
+                    String projectName = sc.nextLine().trim();
+                    m.deleteProject(projectName);
+                    System.out.println("Project deleted successfully!");
+                }
+    
+                case "8" -> { 
+                    // Toggle project visibility
+                    System.out.print("Enter the project name to toggle visibility: ");
+                    String projectName = sc.nextLine().trim();
+                    System.out.print("Enter visibility (true/false): ");
+                    boolean isVisible = Boolean.parseBoolean(sc.nextLine().trim());
+                    m.toggleProjectVisibility(Visibility.ON, isVisible);
+                    System.out.println("Project visibility updated!");
+                }
+    
+                case "9" -> {
+                    // View all enquiries
+                    System.out.println(Enquiry.viewAllEnquiries(ObjectCreate.enquiryList));
+                }
+                case "10" -> {
+                    // Reply to enquiries
+                    m.replyEnquiries(ObjectCreate.enquiryList, sc);
+                }
+                case "11" -> {
+                    System.out.println("Logging out...");
+                    return; // exit the loop to log out
+                }
+                
+    
                 default -> System.out.println("Invalid choice.");
             }
         }
     }
+    
+    
 
     /* ---------------- utility pickers -------------------------- */
     private static Project pickProject() {

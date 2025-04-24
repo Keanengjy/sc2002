@@ -56,8 +56,7 @@ public class Project {
     public void setApplicationOpeningDate(String date) {this.applicationOpeningDate = date;}
     public void setApplicationClosingDate(String date) {this.applicationClosingDate = date;}
 
-    public String getProjectName() {
-        if (visibility) {return projectName;}return null;}
+    public String getProjectName() {return projectName;}
 
     public String getNeighborhood() {return neighborhood;}
     public HDBManager getManager() {return manager;}
@@ -66,6 +65,8 @@ public class Project {
     public boolean getVisibility() {return visibility;}
     public String getApplicationOpeningDate() {return applicationOpeningDate;}
     public String getApplicationClosingDate() {return applicationClosingDate;}
+    public int getAvailableHDBOfficerSlots() {return AvailableHDBOfficerSlots;}
+    public void setAvailableHDBOfficerSlots(int slots) {this.AvailableHDBOfficerSlots = slots;}
     public List<HDBOfficer> getOfficers() {return officers;}
 
     public void addOfficer(HDBOfficer officer) {

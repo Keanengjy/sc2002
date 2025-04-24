@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
+
+import fileops.ObjectCreate;
 import project.ApplicationStatus;
 import project.Enquiry;
+import project.HDBFlat;
 import project.Project;
 import project.UserRole;
 import project.Visibility;
@@ -25,25 +29,59 @@ public class HDBManager extends AbstractUser {
         this.HDBOfficersUnder = "";
     }
 
-    public void createProject(Project project) {
-        project.setManager(this);
-        project.setVisibility(false);
-        managedProjects.add(project);
+    public void createProject(String projectName, String neighborhood, String projectID, 
+                            ApplicationStatus applicationStatus, boolean visibility, 
+                            String applicationOpeningDate, String applicationClosingDate,
+                            Map<HDBFlat, Integer> availableFlats, List<HDBOfficer> officers, 
+                            int availableOfficerSlots, int twoRoomQty, int threeRoomQty) {
+
+        // Create a new Project object using the constructor
+        Project newProject = new Project(projectName, neighborhood, this, projectID, applicationStatus,
+                                        visibility, applicationOpeningDate, applicationClosingDate,
+                                        availableFlats, officers, availableOfficerSlots, 
+                                        twoRoomQty, threeRoomQty);
+
+        // Add the new project to the project list (assuming ObjectCreate.projectList holds the projects)
+        ObjectCreate.projectList.add(newProject);
+        managedProjects.add(newProject);
+        newProject.setManager(this);
+        
+        System.out.println("New project created and added to the project list successfully!");
     }
 
+
     public void editProject(String projectName, String newName) {
+        // Iterate through the list of managed projects
         for (Project project : managedProjects) {
             if (project.getProjectName().equals(projectName)) {
+                // Set the new project name
                 project.setProjectName(newName);
-                break;
+                
+                // If the project is in the global project list (e.g., ObjectCreate.projectList), update it there as well
+                for (Project p : ObjectCreate.projectList) {
+                    if (p.getProjectName().equals(projectName)) {
+                        // Update the project name in the global project list
+                        p.setProjectName(newName);
+                        break;  // Stop searching once the project is found and updated
+                    }
+                }
+                System.out.println("Project name updated successfully.");
+                break; // Exit the loop once the project is found and updated
             }
         }
     }
+    
 
     public void deleteProject(String projectName) {
-        //remove obj
+        // Remove from the managedProjects list
         managedProjects.removeIf(project -> project.getProjectName().equals(projectName));
+        
+        // Remove from the global project list (ObjectCreate.projectList)
+        ObjectCreate.projectList.removeIf(project -> project.getProjectName().equals(projectName));
+        
+        System.out.println("Project deleted successfully.");
     }
+    
 
     public void toggleProjectVisibility(Visibility visibility, boolean isVisible) {
         for (Project project : managedProjects) {
@@ -51,26 +89,14 @@ public class HDBManager extends AbstractUser {
         }
     }
     
-    
     public void replyEnquiry(Enquiry enquiry, String reply) {
         //do smth
         enquiry.setResponse(reply);
         enquiry.setResponderID(Integer.parseInt(this.getNRIC()));
     }
 
-    // public void approveOfficer(Project projectName) {
-    //     System.out.println(pendingApprovals.size() + " pending approvals.");
-    //     HDBOfficer officer = pendingApprovals.get(projectName.getProjectName());
-    //     if (officer != null) {
-    //         officer.setRegisteredProject(projectName);  // assuming this setter exists
-    //         officer.setRegisteredProjectStatus(ApplicationStatus.Successful);  // if you have a status attribute
-    //         pendingApprovals.remove(projectName.getProjectName()); // remove from pending after approval
-    //     } else {
-    //         System.out.println("No pending officer found for project " + projectName);
-    //     }
-    // }
-
     public void approveOfficer(HDBOfficer officer) {
+
         officer.setRegisteredProjectStatus(ApplicationStatus.Successful); // Approve officer's registration
         // HDBManager.pendingApprovalOfficers.remove(officer.getName());  // Remove from pending list
     }
@@ -97,6 +123,49 @@ public class HDBManager extends AbstractUser {
                           name,
                           app.getApplicant().getName(),
                           app.getProject().getProjectName());
+    }
+
+        public void replyEnquiries(List<Enquiry> list, Scanner sc) {
+
+        // collect unanswered enquiries
+        List<Enquiry> pending = list.stream()
+                .filter(e -> e.getResponse() == null || e.getResponse().isBlank())
+                .toList();
+    
+        if (pending.isEmpty()) {
+            System.out.println("No enquiries awaiting reply.");
+            return;
+        }
+    
+        System.out.println("\n--- Unanswered Enquiries ---");
+        for (int i = 0; i < pending.size(); i++) {
+            Enquiry e = pending.get(i);
+            String msg = e.getMessage().values().iterator().next(); // single entry
+            System.out.printf("[%d] ID:%d  From:%s  \"%s\"%n",
+                    i, e.getEnquiryID(), e.getSenderID(), msg);
+        }
+    
+        System.out.print("Select enquiry number to reply (or -1 to cancel): ");
+        int choice;
+        try {
+            choice = Integer.parseInt(sc.nextLine().trim());
+        } catch (NumberFormatException ex) {
+            System.out.println("Invalid input.");
+            return;
+        }
+        if (choice < 0 || choice >= pending.size()) return;
+    
+        Enquiry target = pending.get(choice);
+    
+        System.out.print("Enter your reply: ");
+        String response = sc.nextLine().trim();
+        if (response.isBlank()) {
+            System.out.println("Reply not sent (empty).");
+            return;
+        }
+    
+        target.setResponse(response);
+        System.out.println("Reply sent to enquiry " + target.getEnquiryID());
     }
     
 
@@ -136,7 +205,7 @@ public class HDBManager extends AbstractUser {
     }
 
     public List<String> getPendingApprovalOfficers() {
-        return this.pendingApprovalOfficers;
+        return HDBManager.pendingApprovalOfficers;
     }
     public void addPendingApprovalOfficer(String officerName) {
         if (!pendingApprovalOfficers.contains(officerName)) {

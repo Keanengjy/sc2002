@@ -1,16 +1,17 @@
 package project;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Enquiry implements EnquiryHandler {
     private Map<String, String> message;
     private int enquiryID;
-    private int senderID;
+    private String senderID;
     private String response;
-    private int responderID;
+    private String responderID;
 
-    public Enquiry(Map<String, String> message, int enquiryID, int senderID, String response, int responderID) {
+    public Enquiry(Map<String, String> message, int enquiryID, String senderID, String response, String responderID) {
         this.message = message;
         this.enquiryID = enquiryID;
         this.senderID = senderID;
@@ -18,11 +19,9 @@ public class Enquiry implements EnquiryHandler {
         this.responderID = responderID;
     }
 
-    public void getMessage() {
+    public Map<String,String> getMessage() {
         // Assuming this method is supposed to return the enquiry message
-        for (Map.Entry<String, String> entry : message.entrySet()) {
-            System.out.println("Enquiry from: " + entry.getKey() + " - Message: " + entry.getValue());
-        }
+        return message;
     }
     public void setMessage(Map<String, String> message) {
         this.message = message;
@@ -53,22 +52,22 @@ public class Enquiry implements EnquiryHandler {
     public int getEnquiryID() {
         return enquiryID;}
 
-    public void setSenderID(int senderID) {
+    public void setSenderID(String senderID) {
         this.senderID = senderID;
     }
 
-    public int getSenderID() {
+    public String getSenderID() {
         return senderID;
     }
 
-    public void setResponderID(int responderID) {
+    public void setResponderID(String responderID) {
         this.responderID = responderID;
     }
 
-    public int getResponderID() {
+    public String getResponderID() {
         return responderID;
     }
-    
+
     public String getEnquiry() {
         StringBuilder enquiryDetails = new StringBuilder();
         enquiryDetails.append("Enquiry ID: ").append(enquiryID).append("\n");
@@ -80,14 +79,24 @@ public class Enquiry implements EnquiryHandler {
                          .append(entry.getValue()).append("\n");
         }
         
-        if (responderID != -1) {
-            enquiryDetails.append("Response: ").append(response).append("\n");
-            enquiryDetails.append("Responder ID: ").append(responderID).append("\n");
-        } else {
-            enquiryDetails.append("Status: Pending response\n");
-        }
-        
         return enquiryDetails.toString();
+    }
+        
+    public static String viewAllEnquiries(List<Enquiry> list) {
+        if (list == null || list.isEmpty()) return "No enquiries in the system.";
+
+        StringBuilder sb = new StringBuilder("\n=== All Enquiries ===\n");
+        for (Enquiry e : list) {
+            sb.append(e.getEnquiry());                    // call the existing method
+            if (e.getResponse() != null && !e.getResponse().isBlank()) {
+                sb.append("Response   : ").append(e.getResponse()).append("\n");
+                sb.append("ResponderID: ").append(e.getResponderID()).append("\n");
+            } else {
+                sb.append("Response   : (none)\n");
+            }
+            sb.append("----------------------------------------\n");
+        }
+        return sb.toString();
     }
     
     public void setEnquiry(String enquiry) {
